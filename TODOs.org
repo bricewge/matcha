@@ -1,0 +1,61 @@
+#+TITLE: Matcha
+Site de rencontre,
+        Créer un site permettant a deux personnes de se rencontrer
+- inscription / Connexion
+- Parcourir et rechercher d’autres users
+- Liker les users
+- chatter avec ceux qui auront liker en retour
+Header - Corps - Footer
+Responsive
+Sécurisé entièrement
+* Inscription connexion
+** minimum inscription :
+       - Email
+        - Login
+        - Nom
+        - Prénom
+        - Mot de passe Sécure
+** Connexion :
+        - Connexion avec Username et mdp
+        - Mail de réinitialisationd de mdp
+        - déconnexion depuis nimporte ou
+* Profil utilisateur
+    1. L’Utilisateur doit pouvoir completer son profil
+        1. sexe
+        2. orientation sexuelle
+        3. Une bio
+        4. intérêts sous forme de tags
+        5. Images, minimum 5, dont une pour pdp
+    2. A tout moment l’utilisateur peut modifier ses infos
+    3. L’user doit pouvoir consulter les personnes ayant consulté son profil ainsi que ceux qui ont liker
+    4. L’user doit avoir un score de popularité public
+    5. L’user doit être geolocalisé a l’arrondissement pres, si il ne veut pas être geolocalisé on le localise quand meme, mais il peut modifier sa localisation
+* Parcours
+    1. Liste de suggestion qui correspond a l’utilisateur ( en fonction des tags)
+        1. On ne doit affiche que les profils « interressants « par rapport au sexe etc… 
+        2. On doit mener intelligement les profils :
+            localisation, tags en commun, popularité
+        3. On doit afficher les profils les plus proches en premier
+        4. la liste de profils peut etre triable / filtrable par l’utilisateur par age, localisation, popualrité
+* Recherche
+    1. Recherche avancée avec un ou plusieurs critères;
+        age, popularité, localisation, tags
+    2. liste de  resultats triabe
+* Profil des autres user
+    1. Un user peut consulter le profil des autres user, et tout voir sur lui a part son mail et mdp
+    2. Quand un utilisateur regarde ton profil il apparait dans l’historique
+    3. L’user doit pouvoir liker la photo de l’autre user, si les 2 se like alorrs -> chat, si il a pas de photo = pas de chat
+    4. Consulter le score de popularité
+    5. Voir si l’utilisateur est en ligne , sinon afficher sa last connexion
+    6. Signaler user, faux compte etc..
+    7. Bloquer l’user = il apparait plus dans les résultats de recherche et ne genere plus de notifications
+    8. like / unlike
+* Chat
+    1. l ‘User peut voir de importe quelle page ses messages ou au moins la notification d’un nouveau
+* Notifications
+    1. Like;
+    2. visite;
+    3. Message;
+    4. like en retour
+    5. unlike
+    6. Visible n’importe ou
