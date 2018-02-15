@@ -1,11 +1,17 @@
 <h1>{{ title }}</h1>
-<p>Welcome to {{ title }}</p>
-<br>
-<form action="/test/submit" method="post">
-<input type="text" name="id">
-<button type"submit">Submit</button>
-</form>
 
-{{# each anyArray as |val key|}}
-  {{ key }}:{{ val }}
-{{/each}}
+<form action="/submit" method="post">
+  <div class="input">
+      <label for="email">E-Mail</label><br>
+      <input type="text" id="email" name="email">
+  </div>
+  <div class="input">
+      <label for="password">Password</label><br>
+      <input type="password" id="email" name="password">
+  </div>
+  <div class="input">
+      <label for="confirmPassword">Confirm password</label><br>
+      <input type="password" id="email" name="confirmPassword">
+  </div>
+  <button type="submit">Sign in</button>
+</form>
