@@ -1,7 +1,7 @@
 const bcrypt = require('bcryptjs')
 const db = require('../db')
 
-const saltRounds = 8;
+const saltRounds = 8
 // TODO: update, delete
 
 exports.create = function (userName, email, firstName, lastName, password) {
@@ -26,4 +26,3 @@ exports.getAllByUserName = function (userName) {
 exports.getAll = function () {
   return db.get().queryAsync('SELECT * FROM users;')
 }
-
