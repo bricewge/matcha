@@ -1,25 +1,24 @@
-const db = require('../db.js')
+const db = require('../db')
 
-exports.create = function (userName, email, firstName, lastName, password, done) {
+// TODO: update, delete
+
+exports.create = function (userName, email, firstName, lastName, password) {
   var values = [userName, email, firstName, lastName, password]
-  const query = 'INSERT INTO users (username, email, first_name, last_name, password) VALUES(?, ?, ?, ?, ?)'
-
-  db.get().query(query, values, function (err, result) {
-    if (err) return done(err)
-    done(null, result.insertId)
-  })
+  let query = 'INSERT INTO users (username, email, first_name, last_name, password) VALUES(?)'
+  return db.get().queryAsync(query, values)
 }
 
-exports.getAll = function (done) {
-  db.get().query('SELECT * FROM users', function (err, rows) {
-    if (err) return done(err)
-    done(null, rows)
-  })
+exports.getAllByID = function (id) {
+  let query = 'SELECT * FROM users WHERE id = ?;'
+  return db.get().queryAsync(query, id)
 }
 
-exports.getAllByUser = function (userId, done) {
-  db.get().query('SELECT * FROM users WHERE user_id = ?', userId, function (err, rows) {
-    if (err) return done(err)
-    done(null, rows)
-  })
+exports.getAllByUserName = function (userName) {
+  let query = 'SELECT * FROM users WHERE username = ?;'
+  return db.get().queryAsync(query, userName)
 }
+
+exports.getAll = function () {
+  return db.get().queryAsync('SELECT * FROM users;')
+}
+

@@ -1,30 +1,30 @@
-const mysql = require('mysql2')
+const mysql = require('mysql')
+const Promise = require('bluebird');
 const config = require('./config').db
 
-var state = {
-  pool: null
+var pool = null
+
+exports.connect = function () {
+  pool = Promise.promisifyAll(mysql.createPool(config))
 }
 
-exports.connect = function (done) {
-  state.pool = mysql.createPool(config)
-  done()
+exports.disconnect = function () {
+  if (pool)
+    pool.end()
 }
-
-exports.connectA = async function () {
-  return await mysql.createPool(config)
-}
-
 exports.get = function () {
-  return state.pool
+  return  pool
 }
 
-exports.exists = function () {
-  const query = 'SELECT * FROM INFORMATION_SCHEMA.SCHEMATA WHERE SCHEMA_NAME = ?'
-  state.pool.query(query, config.database, function (err, res, fields) {
-    // if (err) return err
-    console.log(err, res, fields)
-  })
+// TODO Drop multiples tables
+exports.drop = function (table) {
+  let query = 'DELETE FROM ??'
+  return pool.queryAsync(query, table)
 }
 
-// TODO Add fixtures and drop methods for testing
+exports.getDatabases = function () {
+  return pool.queryAsync('SHOW DATABASES;')
+}
+
+// TODO Add fixtures method for testing
 // https://www.terlici.com/2015/08/13/mysql-node-express.html
