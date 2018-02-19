@@ -26,15 +26,14 @@ async function seedUsers() {
       .then((data) => userCount = data.length)
     let promises = []
     for (var i = 0; i < seedSize - userCount; i++) {
-      promises.push(Users.create(fakeUser())
+      promises.push(Users.create(...fakeUser())
                     .then(() => userCount++))
     }
     await Promise.all(promises);
     console.log('Users:', userCount)
   }
-  catch(err) {console.log(err.message)}
+  catch(err) {console.log(err)}
   db.disconnect()
 }
 
 seedUsers()
-
