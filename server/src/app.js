@@ -14,16 +14,7 @@ app.use(cors()) // TODO Remove by proxying the API in the client at /api
 app.use(helmet()) // Add secure HTTP headers
 
 require('./routes')(app)
-
-// Errors handling
-app.use((err, req, res, next) => {
-  console.log(err)
-  if (err.type == 'entity.parse.failed')
-    err.statusCode = 422
-  return res
-    .status(err.statusCode || 500)
-    .json({ error: err.statusCode, message: err.message })
-});
+require('./middlewares/errors')(app) // Errors handling
 
 db.connect()
 if (!db.get()) {
