@@ -3,7 +3,6 @@ const bodyParser = require('body-parser')
 const cors = require('cors')
 const morgan = require('morgan')
 const helmet = require('helmet')
-// const mysql = require('mysql')
 
 const db = require('./db')
 const config = require('./config')
@@ -16,13 +15,22 @@ app.use(helmet()) // Add secure HTTP headers
 
 require('./routes')(app)
 
-db.connect(function(err) {
-  if (err) {
-    console.log('Unable to connect to MySQL.')
-    process.exit(1)
-  } else {
-    app.listen(config.port, function () {
-      console.log(`Server started on port ${config.port}`)
-    })
-  }
-})
+// Errors handling
+app.use((err, req, res, next) => {
+  console.log(err)
+  if (err.type == 'entity.parse.failed')
+    err.statusCode = 422
+  return res
+    .status(err.statusCode || 500)
+    .json({ error: err.statusCode, message: err.message })
+});
+
+db.connect()
+if (!db.get()) {
+  console.log('Unable to connect to MySQL.')
+  process.exit(1)
+} else {
+  app.listen(config.port, function () {
+    console.log(`Server started on port ${config.port}`)
+  })
+}

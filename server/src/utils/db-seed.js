@@ -5,12 +5,12 @@ const Users = require('../models/Users')
 const seedSize = 100
 
 function fakeUser () {
-  var user = []
-  user.push(faker.internet.userName())
-  user.push(faker.internet.email())
-  user.push(faker.name.firstName())
-  user.push(faker.name.lastName())
-  user.push(faker.internet.password())
+  var user = {}
+  user.userName = faker.internet.userName()
+  user.email = faker.internet.email()
+  user.firstName = faker.name.firstName()
+  user.lastName = faker.name.lastName()
+  user.password = faker.internet.password()
   return user
 }
 
@@ -26,7 +26,7 @@ async function seedUsers () {
       .then(function (data) { userCount = data.length })
     let promises = []
     for (var i = 0; i < seedSize - userCount; i++) {
-      promises.push(Users.create(...fakeUser()).then(() => userCount++))
+      promises.push(Users.create(fakeUser()).then(() => userCount++))
     }
     await Promise.all(promises)
     console.log('Users:', userCount)
