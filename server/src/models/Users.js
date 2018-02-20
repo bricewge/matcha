@@ -2,6 +2,7 @@ const bcrypt = require('bcryptjs')
 const db = require('../db')
 
 const saltRounds = 8
+
 // TODO: update, delete
 
 exports.create = function (input) {
