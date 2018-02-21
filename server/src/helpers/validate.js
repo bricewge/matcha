@@ -9,6 +9,7 @@ exports.email = function (email) {
 
 // TODO Use errors to explain why it failed
 exports.password = function (input) {
+  if (!('password' in input)) return false
   for (let key in input) { input[key] = input[key].toLowerCase() }
   if (input.password.length < 8) return false
   if (!keyIsUnique(input, 'password')) return false
