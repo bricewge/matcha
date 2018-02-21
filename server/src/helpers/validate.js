@@ -7,6 +7,7 @@ exports.email = function (email) {
   return regexp.test(String(email).toLowerCase())
 }
 
+// TODO Use errors to explain why it failed
 exports.password = function (input) {
   for (let key in input) { input[key] = input[key].toLowerCase() }
   if (input.password.length < 8) return false
@@ -27,7 +28,7 @@ function passwordIsCommon (password) {
 }
 
 // Should return false
-var tes01 = {
+var test01 = {
   userName: 'toto',
   email: 'to@t.o',
   password: 'QWERTYUI',
@@ -40,5 +41,5 @@ var test02 = {
   password: 'qwertyuisalut',
   firstName: 'Toto',
   lastName: 'OTOT'}
-// console.log(exports.password(tes01))
+// console.log(exports.password(test01))
 // console.log(exports.password(test02))
