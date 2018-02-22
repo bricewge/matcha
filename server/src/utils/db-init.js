@@ -68,7 +68,7 @@ async function dbUserCreate (db, config) {
 
 async function dbCreateTables (db) {
   try {
-    // TODO Add to users: interests, pictures, location
+    // TODO Add to users: location, online/status
     await db.query(`CREATE TABLE users (
                    id int(11) NOT NULL AUTO_INCREMENT,
                    username varchar(255) NOT NULL,
@@ -77,7 +77,7 @@ async function dbCreateTables (db) {
                    last_name varchar(255) NOT NULL,
                    password varchar(255) NOT NULL,
                    activation enum('email', 'profile', 'active') NOT NULL DEFAULT 'email',
-                   sex enum('male', 'female', 'other'),
+                   sex enum('male', 'female'),
                    sexual_orientation enum('hetero', 'homo', 'bi'),
                    fame SMALLINT UNSIGNED NOT NULL DEFAULT 0,
                    birthday DATE,
@@ -85,6 +85,11 @@ async function dbCreateTables (db) {
                    PRIMARY KEY (id),
                    UNIQUE KEY username (username),
                    UNIQUE KEY email (email));`)
+    // TODO Table pictures, with id profile picture
+    // TODO Table likes
+    // TODO Tables interests
+    // TODO Tables visites
+    // TODO ?Table chat?
   } catch (err) { console.error(err.message) }
 }
 
