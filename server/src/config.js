@@ -5,5 +5,8 @@ module.exports = {
     user: process.env.DB_USER || 'matcha',
     password: process.env.DB_PASS || 'matcha',
     database: process.env.DB_NAME || 'matcha'
+  },
+  authentication: {
+    jwtSecret: process.env.JWT_SECRET || 'secret'
   }
 }

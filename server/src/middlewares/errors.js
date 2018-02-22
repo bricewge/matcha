@@ -1,5 +1,6 @@
 const {inSingleQuotes} = require('../helpers/regex')
 const {capitalize} = require('../helpers/string')
+const {RequestValidationError} = require('../helpers/error')
 
 module.exports = (app) => {
   app.use(function notFound (req, res, next) {
@@ -12,6 +13,14 @@ module.exports = (app) => {
     if (err.type === 'entity.parse.failed') {
       err.statusCode = 422
       err.message = 'Unprocessable Entity'
+    }
+    next(err)
+  })
+
+  app.use(function missingInput (err, req, res, next) {
+    if (err instanceof RequestValidationError) {
+      err.statusCode = 400
+      err.message = `Missing input ${err.fields}.`
     }
     next(err)
   })

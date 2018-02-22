@@ -1,27 +1,35 @@
 const bcrypt = require('bcryptjs')
 const db = require('../db')
+const {RequestValidationError} = require('../helpers/error')
 
-const saltRounds = 8
+const SALT_ROUNDS = 8
 
 // TODO: update, delete
 
-exports.create = function (input) {
-  let query = 'INSERT INTO users (username, email, first_name, last_name, password) VALUES(?, ?, ?, ?, ?)'
-  return bcrypt.hash(input.password, saltRounds)
-    .then(function (hash) {
-      var values = [input.userName, input.email, input.firstName, input.lastName, hash]
-      return db.get().queryAsync(query, values)
-    })
+// TODO Protect input
+exports.create = async function (input) {
+  const query = 'INSERT INTO users (username, email, first_name, last_name, password) VALUES(?, ?, ?, ?, ?)'
+  const hash = await bcrypt.hash(input.password, SALT_ROUNDS)
+  const values = [input.userName, input.email, input.firstName, input.lastName, hash]
+  return db.get().queryAsync(query, values)
 }
 
 exports.getAllByID = function (input) {
-  let query = 'SELECT * FROM users WHERE id = ?;'
-  return db.get().queryAsync(query, input.id)
+  if (!input.hasOwnProperty('id')) {
+    throw new RequestValidationError(['id'])
+  } else {
+    const query = 'SELECT * FROM users WHERE id = ?;'
+    return db.get().queryAsync(query, input.id)
+  }
 }
 
 exports.getAllByUserName = function (input) {
-  let query = 'SELECT * FROM users WHERE username = ?;'
-  return db.get().queryAsync(query, input.userName)
+  if (!input.hasOwnProperty('userName')) {
+    throw new RequestValidationError(['userName'])
+  } else {
+    const query = 'SELECT * FROM users WHERE username = ?;'
+    return db.get().queryAsync(query, input.userName)
+  }
 }
 
 exports.getAll = function () {
