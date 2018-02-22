@@ -3,8 +3,13 @@
 import Vue from 'vue'
 import App from './App'
 import router from './router'
+import Vuetify from 'vuetify'
+// import colors from 'vuetify/es5/util/colors'
+import 'vuetify/dist/vuetify.min.css'
 
-Vue.config.productionTip = false
+Vue.config.productionTip = true
+
+Vue.use(Vuetify)
 
 /* eslint-disable no-new */
 new Vue({
