@@ -8,7 +8,7 @@
             Login</v-toolbar-title>
         </v-card-title>
         <v-card-text>
-          <v-form v-model="valid" ref="form" lazy-validation>
+          <v-form v-model="validForm" ref="form" lazy-validation>
             <v-text-field prepend-icon="person"
                           name="userName"
                           label="Username"
@@ -25,6 +25,15 @@
                           :rules="[v => !!v || 'Password is required']"
                           ></v-text-field>
           </v-form>
+          <v-alert
+            type="error"
+            v-model="error"
+
+            dismissible
+            transition="scale-transition"
+            >
+            {{ errorMessage }}
+          </v-alert>
         </v-card-text>
         <v-card-actions>
           <v-spacer></v-spacer>
@@ -37,28 +46,31 @@
 </v-container>
 </template>
 
-<!-- TODO Manage error -->
 <script>
 import AuthenticationService from '@/services/AuthenticationService'
 export default {
   data () {
     return {
-      valid: true,
+      validForm: true,
       userName: '',
       password: '',
-      error: null
+      error: false,
+      errorMessage : ''
     }
   },
   methods: {
     async login () {
-      if (this.$refs.form.validate()) return
+      if (!this.$refs.form.validate()) return
       try {
-        await AuthenticationService.login({
+        const response = await AuthenticationService.login({
           userName: this.userName,
           password: this.password
         })
+        console.log(response.data)
       } catch (err) {
-        this.error = err.response.data.message
+        console.log(err)
+        this.error = true
+        this.errorMessage = err.response.data.message
       }
     }
   }
