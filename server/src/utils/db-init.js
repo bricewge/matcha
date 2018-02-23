@@ -74,7 +74,6 @@ async function dbUserCreate (db, config) {
 
 async function dbCreateTables () {
   // Users
-  // TODO ?Force location?
   await db.get().queryAsync(`CREATE TABLE users (
                  id int(11) NOT NULL AUTO_INCREMENT,
                  userName varchar(255) NOT NULL,
@@ -82,9 +81,9 @@ async function dbCreateTables () {
                  firstName varchar(255) NOT NULL,
                  lastName varchar(255) NOT NULL,
                  password varchar(255) NOT NULL,
-                 activation enum('email', 'profile', 'active', 'fake') NOT NULL DEFAULT 'email',
+                 activation enum('register', 'active', 'fake') NOT NULL DEFAULT 'register',
                  sex enum('male', 'female'),
-                 sexual_orientation enum('hetero', 'homo', 'bi'),
+                 sexualPreference enum('hetero', 'homo', 'bi'),
                  fame SMALLINT UNSIGNED NOT NULL DEFAULT 0,
                  birthday DATE,
                  biography TEXT,
@@ -96,6 +95,7 @@ async function dbCreateTables () {
                  location POINT,
                  online enum('N','Y') NOT NULL DEFAULT 'N',
                  socketid varchar(20),
+                 resetPasswordToken varchar(255),
                  PRIMARY KEY (id),
                  UNIQUE KEY userName (userName),
                  UNIQUE KEY email (email));`)

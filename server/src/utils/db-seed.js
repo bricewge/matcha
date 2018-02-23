@@ -14,6 +14,8 @@ function fakeUser () {
   return user
 }
 
+// TODO Manager error.code 'ER_DUP_ENTRY'
+// TODO Generate activated user: sex, sexual preferences
 async function seedUsers () {
   let userCount = 0
   // NOTE Use seed as a workaround until unique method is published
