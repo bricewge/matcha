@@ -8,7 +8,7 @@ const SALT_ROUNDS = 8
 
 // TODO Protect input
 exports.create = async function (input) {
-  const query = 'INSERT INTO users (username, email, first_name, last_name, password) VALUES(?, ?, ?, ?, ?)'
+  const query = 'INSERT INTO users (userName, email, firstName, lastName, password) VALUES(?, ?, ?, ?, ?)'
   const hash = await bcrypt.hash(input.password, SALT_ROUNDS)
   const values = [input.userName, input.email, input.firstName, input.lastName, hash]
   return db.get().queryAsync(query, values)
@@ -27,7 +27,7 @@ exports.getAllByUserName = function (input) {
   if (!input.hasOwnProperty('userName')) {
     throw new RequestValidationError(['userName'])
   } else {
-    const query = 'SELECT * FROM users WHERE username = ?;'
+    const query = 'SELECT * FROM users WHERE userName = ?;'
     return db.get().queryAsync(query, input.userName)
   }
 }

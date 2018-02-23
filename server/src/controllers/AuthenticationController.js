@@ -33,7 +33,7 @@ module.exports = {
       } else if (!await bcrypt.compare(req.body.password, dbRes[0].password)) {
         throw err
       } else {
-        const user = pick(dbRes[0], 'username', 'activation')
+        const user = pick(dbRes[0], 'id', 'userName', 'activation')
         res.json({
           user,
           token: jwtSignUser(user)
