@@ -3,6 +3,7 @@ const Promise = require('bluebird')
 const db = require('../db')
 const config = require('../config').db
 const User = require('../models/Users')
+const Picture = require('../models/Pictures')
 const Interest = require('../models/Interests')
 const Visit = require('../models/Visits')
 const Like = require('../models/Likes')
@@ -83,6 +84,7 @@ async function dbUserCreate (db, config) {
 
 async function dbCreateTables () {
   await User.createTable()
+  await Picture.createTable()
   await Interest.createTable()
   await Visit.createTable()
   await Like.createTable()

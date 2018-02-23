@@ -15,6 +15,7 @@ exports.create = async function (input) {
 
 // TODO Catch wrong enum
 // TODO Add interests
+// TODO Add pictures
 exports.activate = async function (input) {
   const query = `UPDATE users
                  SET sex = ?, sexualPreference = ?, biography = ?,
@@ -61,17 +62,14 @@ exports.createTable = function () {
                  fame SMALLINT UNSIGNED NOT NULL DEFAULT 0,
                  birthday DATE,
                  biography TEXT,
-                 picture1 varchar(255),
-                 picture2 varchar(255),
-                 picture3 varchar(255),
-                 picture4 varchar(255),
-                 picture5 varchar(255),
+                 profilePicture varchar(255),
                  location POINT,
                  online enum('N','Y') NOT NULL DEFAULT 'N',
                  socketid varchar(20),
                  resetPasswordToken varchar(255),
                  PRIMARY KEY (id),
                  UNIQUE KEY userName (userName),
-                 UNIQUE KEY email (email));`
+                 UNIQUE KEY email (email),
+                 UNIQUE KEY profilePicture (profilePicture));`
   return db.get().queryAsync(table)
 }
