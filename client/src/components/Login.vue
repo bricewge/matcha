@@ -8,16 +8,22 @@
             Login</v-toolbar-title>
         </v-card-title>
         <v-card-text>
-          <v-form>
+          <v-form v-model="valid" ref="form" lazy-validation>
             <v-text-field prepend-icon="person"
                           name="userName"
                           label="Username"
-                          type="text"></v-text-field>
+                          type="text"
+                          v-model="userName"
+                          :rules="[v => !!v || 'Username is required']"
+                          ></v-text-field>
             <v-text-field prepend-icon="lock"
                           name="password"
                           label="Password"
                           id="password"
-                          type="password"></v-text-field>
+                          type="password"
+                          v-model="password"
+                          :rules="[v => !!v || 'Password is required']"
+                          ></v-text-field>
           </v-form>
         </v-card-text>
         <v-card-actions>
@@ -32,12 +38,12 @@
 </template>
 
 <!-- TODO Manage error -->
-<!-- TODO Disable buttom until username and password (> 8 characters) are typed -->
 <script>
 import AuthenticationService from '@/services/AuthenticationService'
 export default {
   data () {
     return {
+      valid: true,
       userName: '',
       password: '',
       error: null
@@ -45,6 +51,7 @@ export default {
   },
   methods: {
     async login () {
+      if (this.$refs.form.validate()) return
       try {
         await AuthenticationService.login({
           userName: this.userName,
