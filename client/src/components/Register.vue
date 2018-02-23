@@ -13,43 +13,43 @@
                           name="userName"
                           v-model="userName"
                           :rules="userNameRules"
-                          required
                           label="Username"
                           type="text"
+                          required
                           ></v-text-field>
             <v-text-field
                           name="email"
                           v-model="email"
                           :rules="emailRules"
-                          required
                           label="Email"
                           type="text"
+                          required
                           ></v-text-field>
             <v-text-field
                           name="firstName"
                           v-model="firstName"
                           :rules="firstNameRules"
-                          required
                           label="First name"
                           type="text"
+                          required
                           ></v-text-field>
             <v-text-field
                           name="lastName"
                           v-model="lastName"
-                          :rules="lastNameRules"
-                          required
+                          :rules="lastNameRules" 
                           label="Last name"
                           type="text"
+                          required
                           ></v-text-field>
             <v-text-field
                           name="password"
-                          required
                           label="Password"
                           hint="At least 8 characters"
                           :counter="8"
                           :append-icon="hidePassword ? 'visibility' : 'visibility_off'"
                           :append-icon-cb="() => (hidePassword = !hidePassword)"
                           :type="hidePassword ? 'password' : 'text'"
+                          required
                           ></v-text-field>
             <v-text-field
                           name="confirmPassword"
@@ -60,14 +60,15 @@
                           :append-icon-cb="() => (hidePassword = !hidePassword)"
                           :type="hidePassword ? 'password' : 'text'"
                           ></v-text-field>
+                       <v-btn @click="register"
+                       :disabled="!valid"
+                       color="primary">Register</v-btn>
+                          <v-btn @click="clear">clear</v-btn>
                 </v-form>
                 <small>*Indicates required field</small>
               </v-card-text>
               <v-card-actions>
                 <v-spacer></v-spacer>
-                <v-btn @click="register"
-                       :disabled="!valid"
-                       color="primary">Register</v-btn>
               </v-card-actions>
             </v-card>
           </v-flex>
@@ -80,11 +81,11 @@
 <!-- TODO Don't repeat password show/hide code -->
 <script>
 import AuthenticationService from '@/services/AuthenticationService'
-// import axios from 'axios'
+import axios from 'axios'
 
 export default {
-  data () {
-    return {
+  data: () => ({
+      valid: true,
       userName: '',
       userNameRules: [
         v => !!v || 'userName is required'
@@ -110,23 +111,28 @@ export default {
       confirmPassword: '',
       hidePassword: true,
       error: null
-    }
-  },
+  }),
+
   methods: {
     async register () {
-      try {
-        await AuthenticationService.register({
-          userName: this.userName,
-          email: this.email,
-          firstName: this.firstName,
-          lastName: this.lastName,
-          password: this.password
-        })
-      } catch (err) {
-        this.error = err.response.data.message
+      if (this.$refs.form.validate()) {
+        try {
+          await AuthenticationService.register({
+            userName: this.userName,
+            email: this.email,
+            firstName: this.firstName,
+            lastName: this.lastName,
+            password: this.password
+          })
+        } catch (err) {
+          this.error = err.response.data.message
+        }
       }
-    }
+    },
+       clear () {
+        this.$refs.form.reset()
   }
+}
 }
 </script>
 
