@@ -2,6 +2,15 @@ const mysql = require('mysql')
 const Promise = require('bluebird')
 const db = require('../db')
 const config = require('../config').db
+const User = require('../models/Users')
+const Interest = require('../models/Interests')
+const Visit = require('../models/Visits')
+const Like = require('../models/Likes')
+const Match = require('../models/Matchs')
+const Message = require('../models/Messages')
+const Notification = require('../models/Notifications')
+const Fake = require('../models/Fakes')
+const Block = require('../models/Blocks')
 
 async function main () {
   if (!await dbReset()) process.exit(1)
@@ -73,83 +82,15 @@ async function dbUserCreate (db, config) {
 }
 
 async function dbCreateTables () {
-  // Users
-  await db.get().queryAsync(`CREATE TABLE users (
-                 id int(11) NOT NULL AUTO_INCREMENT,
-                 userName varchar(255) NOT NULL,
-                 email varchar(255) NOT NULL,
-                 firstName varchar(255) NOT NULL,
-                 lastName varchar(255) NOT NULL,
-                 password varchar(255) NOT NULL,
-                 activation enum('register', 'active', 'fake') NOT NULL DEFAULT 'register',
-                 sex enum('male', 'female'),
-                 sexualPreference enum('hetero', 'homo', 'bi'),
-                 fame SMALLINT UNSIGNED NOT NULL DEFAULT 0,
-                 birthday DATE,
-                 biography TEXT,
-                 picture1 varchar(255),
-                 picture2 varchar(255),
-                 picture3 varchar(255),
-                 picture4 varchar(255),
-                 picture5 varchar(255),
-                 location POINT,
-                 online enum('N','Y') NOT NULL DEFAULT 'N',
-                 socketid varchar(20),
-                 resetPasswordToken varchar(255),
-                 PRIMARY KEY (id),
-                 UNIQUE KEY userName (userName),
-                 UNIQUE KEY email (email));`)
-  // Tags of interests
-  await db.get().queryAsync(`CREATE TABLE tags (
-                 id int(11) NOT NULL AUTO_INCREMENT,
-                 userId int(11) NOT NULL,
-                 tag varchar(255) NOT NULL,
-                 PRIMARY KEY (id));`)
-  // Visits
-  await db.get().queryAsync(`CREATE TABLE visits (
-                 id int(11) NOT NULL AUTO_INCREMENT,
-                 fromUserId int(11) NOT NULL,
-                 toUserId int(11) NOT NULL,
-                 PRIMARY KEY (id));`)
-  // Likes
-  await db.get().queryAsync(`CREATE TABLE likes (
-                 id int(11) NOT NULL AUTO_INCREMENT,
-                 fromUserId int(11) NOT NULL,
-                 toUserId int(11) NOT NULL,
-                 PRIMARY KEY (id));`)
-  // Matches
-  await db.get().queryAsync(`CREATE TABLE matchs (
-                 id int(11) NOT NULL AUTO_INCREMENT,
-                 fromUserId int(11) NOT NULL,
-                 toUserId int(11) NOT NULL,
-                 PRIMARY KEY (id));`)
-  // Messages
-  await db.get().queryAsync(`CREATE TABLE messages (
-                 id int(11) NOT NULL AUTO_INCREMENT,
-                 fromUserId int(11) NOT NULL,
-                 toUserId int(11) NOT NULL,
-                 message TEXT,
-                 PRIMARY KEY (id));`)
-  // Notifications
-  await db.get().queryAsync(`CREATE TABLE notifications (
-                 id int(11) NOT NULL AUTO_INCREMENT,
-                 userId int(11) NOT NULL,
-                 type enum('like', 'visit', 'message', 'match', 'unmatch') NOT NULL,
-                 PRIMARY KEY (id));`)
-  // Reported as fake
-  await db.get().queryAsync(`CREATE TABLE fakes (
-                 id int(11) NOT NULL AUTO_INCREMENT,
-                 fromUserId int(11) NOT NULL,
-                 toUserId int(11) NOT NULL,
-                 PRIMARY KEY (id),
-                 UNIQUE (fromUserId, toUserId));`)
-  // Blocked users
-  await db.get().queryAsync(`CREATE TABLE blocks (
-                 id int(11) NOT NULL AUTO_INCREMENT,
-                 fromUserId int(11) NOT NULL,
-                 toUserId int(11) NOT NULL,
-                 PRIMARY KEY (id),
-                 UNIQUE (fromUserId, toUserId));`)
+  await User.createTable()
+  await Interest.createTable()
+  await Visit.createTable()
+  await Like.createTable()
+  await Match.createTable()
+  await Message.createTable()
+  await Notification.createTable()
+  await Fake.createTable()
+  await Block.createTable()
 }
 
 main()

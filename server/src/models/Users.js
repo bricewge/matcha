@@ -6,9 +6,20 @@ const SALT_ROUNDS = 8
 
 // TODO: update, delete
 
-// TODO Protect input
 exports.create = async function (input) {
-  const query = 'INSERT INTO users (userName, email, firstName, lastName, password) VALUES(?, ?, ?, ?, ?)'
+  const query = 'INSERT INTO users (userName, email, firstName, lastName, password) VALUES(?, ?, ?, ?, ?);'
+  const hash = await bcrypt.hash(input.password, SALT_ROUNDS)
+  const values = [input.userName, input.email, input.firstName, input.lastName, hash]
+  return db.get().queryAsync(query, values)
+}
+
+// TODO Catch wrong enum
+// TODO Add interests
+exports.activate = async function (input) {
+  const query = `UPDATE users
+                 SET sex = ?, sexualPreference = ?, biography = ?,
+                 biography = ?, birthday = ?, location = ?, picture1 = ?,
+                 WHERE userName = ?;`
   const hash = await bcrypt.hash(input.password, SALT_ROUNDS)
   const values = [input.userName, input.email, input.firstName, input.lastName, hash]
   return db.get().queryAsync(query, values)
@@ -34,4 +45,33 @@ exports.getAllByUserName = function (input) {
 
 exports.getAll = function () {
   return db.get().queryAsync('SELECT * FROM users;')
+}
+
+exports.createTable = function () {
+  const table = `CREATE TABLE users (
+                 id int(11) NOT NULL AUTO_INCREMENT,
+                 userName varchar(255) NOT NULL,
+                 email varchar(255) NOT NULL,
+                 firstName varchar(255) NOT NULL,
+                 lastName varchar(255) NOT NULL,
+                 password varchar(255) NOT NULL,
+                 activation enum('register', 'active', 'fake') NOT NULL DEFAULT 'register',
+                 sex enum('male', 'female'),
+                 sexualPreference enum('hetero', 'homo', 'bi'),
+                 fame SMALLINT UNSIGNED NOT NULL DEFAULT 0,
+                 birthday DATE,
+                 biography TEXT,
+                 picture1 varchar(255),
+                 picture2 varchar(255),
+                 picture3 varchar(255),
+                 picture4 varchar(255),
+                 picture5 varchar(255),
+                 location POINT,
+                 online enum('N','Y') NOT NULL DEFAULT 'N',
+                 socketid varchar(20),
+                 resetPasswordToken varchar(255),
+                 PRIMARY KEY (id),
+                 UNIQUE KEY userName (userName),
+                 UNIQUE KEY email (email));`
+  return db.get().queryAsync(table)
 }
