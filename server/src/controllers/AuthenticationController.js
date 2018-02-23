@@ -13,10 +13,8 @@ function jwtSignUser (user) {
 module.exports = {
   async register (req, res, next) {
     try {
-      // TODO Better response when sucessfull
-      // console.log(req.body)
       await User.create(req.body)
-      res.send(JSON.stringify(req.body.userName))
+      res.json(pick(req.body, 'userName'))
     } catch (err) {
       next(err)
     }

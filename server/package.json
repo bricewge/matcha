@@ -5,6 +5,7 @@
   "main": "index.js",
   "scripts": {
     "start": "nodemon src/app.js",
+    "init": "node src/utils/db-init.js && node src/utils/db-seed.js",
     "dev": "nodemon src/app.js --exec  \"npm run lint && node\"",
     "lint": "eslint src/**/*.js"
   },
