@@ -44,6 +44,15 @@ exports.getAllByUserName = function (input) {
   }
 }
 
+exports.getAllByEmail = function (input) {
+  if (!input.hasOwnProperty('email')) {
+    throw new RequestValidationError(['email'])
+  } else {
+    const query = 'SELECT * FROM users WHERE email = ?;'
+    return db.get().queryAsync(query, input.email)
+  }
+}
+
 exports.getAll = function () {
   return db.get().queryAsync('SELECT * FROM users;')
 }
