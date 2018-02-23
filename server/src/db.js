@@ -1,5 +1,5 @@
 const mysql = require('mysql')
-const Promise = require('bluebird');
+const Promise = require('bluebird')
 const config = require('./config').db
 
 var pool = null
@@ -9,11 +9,10 @@ exports.connect = function () {
 }
 
 exports.disconnect = function () {
-  if (pool)
-    pool.end()
+  if (pool) pool.end()
 }
 exports.get = function () {
-  return  pool
+  return pool
 }
 
 // TODO Drop multiples tables
