@@ -32,8 +32,8 @@ export default {
 </style>
 
 <style>
-  .link-hidden {
+.link-hidden {
   color: inherit;
   text-decoration: none;
-  }
+}
 </style>

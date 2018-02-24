@@ -5,24 +5,15 @@
       <v-card class="elevation-6">
         <v-card-title class="grey lighten-4">
           <v-toolbar-title class="text-xs-center">
-            Login</v-toolbar-title>
+            Forgot your password?</v-toolbar-title>
         </v-card-title>
         <v-card-text>
           <v-form v-model="validForm" ref="form" lazy-validation>
-            <v-text-field prepend-icon="person"
-                          name="userName"
-                          label="Username"
-                          type="text"
-                          v-model="userName"
-                          :rules="[v => !!v || 'Username is required']"
-                          ></v-text-field>
-            <v-text-field prepend-icon="lock"
-                          name="password"
-                          label="Password"
-                          id="password"
-                          type="password"
-                          v-model="password"
-                          :rules="[v => !!v || 'Password is required']"
+            <v-text-field prepend-icon="mail"
+                          name="email"
+                          label="Email"
+                          v-model="email"
+                          :rules="[v => !!v || 'Email is required']"
                           ></v-text-field>
           </v-form>
           <v-alert
@@ -33,10 +24,10 @@
             >{{ errorMessage }}</v-alert>
         </v-card-text>
         <v-card-actions class="mx-2 pb-3">
-          <router-link to="/forgot" class="ml-3 grey--text text--darken-1">Forgot password?</router-link></v-toolbar-title>
+          <router-link to="/login" class="ml-3 password grey--text text--darken-1">Login</router-link></v-toolbar-title>
           <v-spacer></v-spacer>
           <v-btn @click="login"
-                 color="primary">Login</v-btn>
+                 color="primary">Send me instructions</v-btn>
         </v-card-actions>
       </v-card>
     </v-flex>
@@ -51,20 +42,18 @@ export default {
     return {
       validForm: true,
       userName: '',
-      password: '',
+      email: '',
       error: false,
       errorMessage : ''
     }
   },
   methods: {
-    async login () {
+    async forgot () {
       if (!this.$refs.form.validate()) return
       try {
         const response = await AuthenticationService.login({
-          userName: this.userName,
-          password: this.password
+          email: this.email
         })
-        console.log(response.data)
       } catch (err) {
         console.log(err)
         this.error = true
