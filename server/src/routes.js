@@ -1,5 +1,5 @@
-const AuthenticationController = require('./controllers/AuthenticationController.js')
-const AuthenticationControllerPolicy = require('./middlewares/AuthenticationControllerPolicy')
+const auth = require('./controllers/auth')
+// const activate = require('./middlewares/activate')
 
 module.exports = (app) => {
   app.get('/', (req, res) => {
@@ -7,9 +7,14 @@ module.exports = (app) => {
   })
 
   app.post('/register',
-    AuthenticationControllerPolicy.register,
-    AuthenticationController.register)
+    auth.register)
 
   app.post('/login',
-    AuthenticationController.login)
+    auth.login)
+
+  // app.post('/user',
+  //          authentication.login)
+
+  // app.post('/activate',
+  //    activate.activate)
 }

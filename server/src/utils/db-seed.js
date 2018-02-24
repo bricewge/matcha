@@ -32,6 +32,7 @@ async function seedUsers () {
     }
     await Promise.all(promises)
     console.log('Users:', userCount)
+    // console.log(await Users.update({id: '500', sex: 'male'}))
   } catch (err) { console.log(err) }
   db.disconnect()
 }

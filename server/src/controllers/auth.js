@@ -3,18 +3,40 @@ const jwt = require('jsonwebtoken')
 const {pick} = require('../helpers/object')
 const User = require('../models/Users')
 const config = require('../config')
+const validate = require('../helpers/validate')
+const {AppError} = require('../helpers/error')
 
+// A controller should:
+// - Sanatize data
+// - Return errors; they can came from the models or the controller
+// - Return data
+// Possible errors:
+// - missing fields
+// - not wanted fields
+// - wrong type
+// - already exits
+
+// Maybe should be merged in loggedUserData
 function jwtSignUser (user) {
   return jwt.sign(user,
     config.authentication.jwtSecret,
-    {expiresIn: '7d'})
+    {expiresIn: '30d'})
+}
+
+function loggedUserData (user) {
+  user = pick(user, ['id', 'userName', 'activation'])
+  return {user, token: jwtSignUser(user)}
 }
 
 module.exports = {
   async register (req, res, next) {
+    const filter = ['userName', 'email', 'password', 'firstName', 'lastName']
+    const input = pick(req.body, filter)
     try {
-      await User.create(req.body)
-      res.json(pick(req.body, 'userName'))
+      validate.email(req.body.email)
+      validate.password(req.body)
+      let user = await User.create(input)
+      res.json(loggedUserData(user))
     } catch (err) {
       next(err)
     }
@@ -22,29 +44,17 @@ module.exports = {
 
   async login (req, res, next) {
     try {
-      const err = new Error('login.failed')
-      let dbRes = await User.getAllByUserName(req.body)
-      if (!dbRes) {
+      const err = new AppError('Incorrect login credentials')
+      let user = await User.getAllByUserName(req.body)
+      if (!user) {
         throw err
-      } else if (!dbRes.length) {
-        throw err
-      } else if (!await bcrypt.compare(req.body.password, dbRes[0].password)) {
+      } else if (!await bcrypt.compare(req.body.password, user.password)) {
         throw err
       } else {
-        const user = pick(dbRes[0], 'id', 'userName', 'activation')
-        res.json({
-          user,
-          token: jwtSignUser(user)
-        })
+        res.json(loggedUserData(user))
       }
     } catch (err) {
-      if (err.message === 'login.failed') {
-        res
-          .status(400)
-          .json({error: 400, message: 'Incorrect login credentials'})
-      } else {
-        next(err)
-      }
+      next(err)
     }
   },
 

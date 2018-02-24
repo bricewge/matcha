@@ -1,59 +1,65 @@
 const bcrypt = require('bcryptjs')
+const mysql = require('mysql')
 const db = require('../db')
-const {RequestValidationError} = require('../helpers/error')
+const validate = require('../helpers/validate')
 
 const SALT_ROUNDS = 8
 
-// TODO: update, delete
+// Actions: C(reate)R(emove)U(pdate)D(elete)
+// Verify type of data and required data
 
+// ?Do I need to verify all the types? Or only that it doesn't crash
+
+// const enums = {
+//   activation: ['register', 'active', 'fake'],
+//   sex: ['male', 'female'],
+//   sexualPreference: ['hetero', 'homo', 'bi']
+// }
 exports.create = async function (input) {
-  const query = 'INSERT INTO users (userName, email, firstName, lastName, password) VALUES(?, ?, ?, ?, ?);'
-  const hash = await bcrypt.hash(input.password, SALT_ROUNDS)
-  const values = [input.userName, input.email, input.firstName, input.lastName, hash]
-  return db.get().queryAsync(query, values)
+  const columns = ['userName', 'email', 'firstName', 'lastName', 'password']
+  validate.input(input, columns)
+  // validate.enum(input, enums)
+  const query = 'INSERT INTO users SET ?;'
+  input.password = await bcrypt.hash(input.password, SALT_ROUNDS)
+  let result = await db.get().queryAsync(query, input)
+  return exports.getAllById({id: result.insertId})
 }
 
-// TODO Catch wrong enum
-// TODO Add interests
-// TODO Add pictures
-exports.activate = async function (input) {
-  const query = `UPDATE users
-                 SET sex = ?, sexualPreference = ?, biography = ?,
-                 biography = ?, birthday = ?, location = ?, picture1 = ?,
-                 WHERE userName = ?;`
-  const hash = await bcrypt.hash(input.password, SALT_ROUNDS)
-  const values = [input.userName, input.email, input.firstName, input.lastName, hash]
-  return db.get().queryAsync(query, values)
+exports.update = async function (input) {
+  validate.input(input, ['id'])
+  // validate.enum(input, enums)
+  let query = 'UPDATE users SET ? WHERE id = ?;'
+  const id = input.id
+  delete input.id
+  query = mysql.format(query, [input, id])
+  await db.get().queryAsync(query, input)
+  return exports.getAllById({'id': id})
 }
 
-exports.getAllByID = function (input) {
-  if (!input.hasOwnProperty('id')) {
-    throw new RequestValidationError(['id'])
-  } else {
-    const query = 'SELECT * FROM users WHERE id = ?;'
-    return db.get().queryAsync(query, input.id)
-  }
+exports.getAllById = async function (input) {
+  validate.input(input, ['id'])
+  const query = 'SELECT * FROM users WHERE id = ?;'
+  const result = await db.get().queryAsync(query, input.id)
+  return result[0]
 }
 
-exports.getAllByUserName = function (input) {
-  if (!input.hasOwnProperty('userName')) {
-    throw new RequestValidationError(['userName'])
-  } else {
-    const query = 'SELECT * FROM users WHERE userName = ?;'
-    return db.get().queryAsync(query, input.userName)
-  }
+exports.getAllByUserName = async function (input) {
+  validate.input(input, ['userName'])
+  const query = 'SELECT * FROM users WHERE userName = ?;'
+  const result = await db.get().queryAsync(query, input.userName)
+  return result[0]
 }
 
-exports.getAllByEmail = function (input) {
-  if (!input.hasOwnProperty('email')) {
-    throw new RequestValidationError(['email'])
-  } else {
-    const query = 'SELECT * FROM users WHERE email = ?;'
-    return db.get().queryAsync(query, input.email)
-  }
+exports.getAllByEmail = async function (input) {
+  validate.input(input, ['email'])
+  const query = 'SELECT * FROM users WHERE email = ?;'
+  const result = await db.get().queryAsync(query, input.email)
+  return result[0]
 }
 
-exports.getAll = function () {
+// Not sure if it's consistent with the result
+// of the other functions of the model
+exports.getAll = async function () {
   return db.get().queryAsync('SELECT * FROM users;')
 }
 
@@ -73,7 +79,7 @@ exports.createTable = function () {
                  biography TEXT,
                  profilePicture varchar(255),
                  location POINT,
-                 online enum('N','Y') NOT NULL DEFAULT 'N',
+                 online tinyint(1) NOT NULL DEFAULT 0,
                  socketid varchar(20),
                  resetPasswordToken varchar(255),
                  PRIMARY KEY (id),

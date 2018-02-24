@@ -1,26 +1,31 @@
 const {readFileSync} = require('fs')
 const path = require('path')
-const {keyIsUnique} = require('./object.js')
-var cache = require('memory-cache')
+const cache = require('memory-cache')
+const {valueIsUnique, missingKeys, is} = require('./object.js')
+const {AppError, RequestValidationError} = require('../helpers/error')
 
 exports.email = function (email) {
   let regexp = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
   if (!regexp.test(String(email).toLowerCase())) {
-    throw Error('\'email\' is invalid.')
+    throw new AppError('Email is invalid.', 400)
   }
 }
 
 exports.password = function (input) {
   if (!('password' in input)) {
-    throw Error('\'password\' is required.')
+    throw new RequestValidationError('password')
   }
-  for (let key in input) { input[key] = input[key].toLowerCase() }
+  for (let key in input) {
+    if (is('String', input[key])) {
+      input[key] = input[key].toLowerCase()
+    }
+  }
   if (input.password.length < 8) {
-    throw Error('\'password\' has to bo more than 8 characters')
-  } else if (!keyIsUnique(input, 'password')) {
-    throw Error('\'password\' can\'t be the as another input.')
+    throw new AppError('Password has to be more than 8 characters.', 400)
+  } else if (!valueIsUnique(input, 'password')) {
+    throw new AppError('Password can\'t be the same as an other input.', 400)
   } else if (passwordIsCommon(input.password)) {
-    throw Error('\'password\' is too common.')
+    throw new AppError('Password is too common.', 400)
   }
 }
 
@@ -38,19 +43,47 @@ function passwordIsCommon (password) {
   return false
 }
 
-// // Should return false
+exports.input = function (input, expected) {
+  const missing = missingKeys(input, expected)
+  if (missing.length) {
+    throw new RequestValidationError(missing)
+  } else {
+    return true
+  }
+}
+
+exports.enum = function (input, expected) {
+  for (let key in expected) {
+    if (input.hasOwnProperty(key) && !expected[key].includes(input[key])) {
+      return false
+    }
+  }
+  return true
+}
+
+// Should return false
 // var test01 = {
 //   userName: 'toto',
 //   email: 'to@t.o',
 //   password: 'QWERTYUI',
 //   firstName: 'Toto',
 //   lastName: 'OTOT'}
-// // Should return false
+// Should return false
 // var test02 = {
 //   userName: 'toto',
 //   email: 'to@t.o',
 //   password: 'qwertyuisalut',
 //   firstName: 'Toto',
 //   lastName: 'OTOT'}
+// const test03 = {
+//   activation: ['register', 'active', 'fake'],
+//   sex: ['male', 'female'],
+//   sexualPreference: ['hetero', 'homo', 'bi']
+// }
 // console.log(exports.password(test01))
 // console.log(exports.password(test02))
+// console.log(exports.input(test01, ['userName']))
+// console.log(exports.input(test01, ['trololol']))
+// console.log(exports.enum({sex: 'inter'}, test03))
+// console.log(exports.enum({sex: 'female'}, test03))
+// console.log(exports.enum({sex: 'male'}, test03))

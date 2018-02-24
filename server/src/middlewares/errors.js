@@ -1,6 +1,6 @@
 const {inSingleQuotes} = require('../helpers/regex')
 const {capitalize} = require('../helpers/string')
-const {RequestValidationError} = require('../helpers/error')
+const {RequestValidationError, AppError} = require('../helpers/error')
 
 module.exports = (app) => {
   app.use(function notFound (req, res, next) {
@@ -17,6 +17,7 @@ module.exports = (app) => {
     next(err)
   })
 
+  // TODO Pretify message when multiple fileds
   app.use(function missingInput (err, req, res, next) {
     if (err instanceof RequestValidationError) {
       err.statusCode = 400

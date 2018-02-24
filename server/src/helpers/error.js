@@ -10,6 +10,7 @@ exports.AppError = class extends Error {
     // I'm going to use preferred HTTP status for this error types.
     // `500` is the default value if not specified.
     this.status = status || 500
+    this.statusCode = status || 500
   }
 }
 
