@@ -1,7 +1,7 @@
 const bcrypt = require('bcryptjs')
 const jwt = require('jsonwebtoken')
 const {pick} = require('../helpers/object')
-const User = require('../models/Users')
+const user = require('../models/users')
 const config = require('../config')
 const validate = require('../helpers/validate')
 const {AppError} = require('../helpers/error')
@@ -35,8 +35,8 @@ module.exports = {
     try {
       validate.email(req.body.email)
       validate.password(req.body)
-      let user = await User.create(input)
-      res.json(loggedUserData(user))
+      let result = await user.create(input)
+      res.json(loggedUserData(result))
     } catch (err) {
       next(err)
     }
@@ -44,14 +44,14 @@ module.exports = {
 
   async login (req, res, next) {
     try {
-      const err = new AppError('Incorrect login credentials')
-      let user = await User.getAllByUserName(req.body)
-      if (!user) {
+      const err = new AppError('Incorrect login credentials', 400)
+      let result = await user.getAllByUserName(req.body)
+      if (!result) {
         throw err
-      } else if (!await bcrypt.compare(req.body.password, user.password)) {
+      } else if (!await bcrypt.compare(req.body.password, result.password)) {
         throw err
       } else {
-        res.json(loggedUserData(user))
+        res.json(loggedUserData(result))
       }
     } catch (err) {
       next(err)
@@ -60,10 +60,10 @@ module.exports = {
 
   async forgotPasword (req, res, next) {
     try {
-      const user = await User.getAllByEmail(req.body)
+      const result = await user.getAllByEmail(req.body)
       const err = new Error('reset.failed')
-      if (!user) throw err
-      else if (user.length) throw err
+      if (!result) throw err
+      else if (result.length) throw err
       else {
         // add token to db
         // send email

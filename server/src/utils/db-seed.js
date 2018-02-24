@@ -1,6 +1,6 @@
 const faker = require('faker')
 const db = require('../db')
-const Users = require('../models/Users')
+const user = require('../models/users')
 
 const SEED_SIZE = 500
 
@@ -24,11 +24,11 @@ async function seedUsers () {
   db.connect()
   try {
     await db.drop('users')
-    await Users.getAll()
+    await user.getAll()
       .then(function (data) { userCount = data.length })
     let promises = []
     for (var i = 0; i < SEED_SIZE - userCount; i++) {
-      promises.push(Users.create(fakeUser()).then(() => userCount++))
+      promises.push(user.create(fakeUser()).then(() => userCount++))
     }
     await Promise.all(promises)
     console.log('Users:', userCount)
