@@ -73,7 +73,7 @@ module.exports = {
       transporter.sendMail({
         to: result.email,
         subject: 'Matcha password reset',
-        text: `To reset your password follow this link: http://${req.headers.origin}/reset/${token}\n`
+        text: `To reset your password follow this link: ${req.headers.origin}/reset/${token}\n`
       })
       res.json({message: `An email has been send to ${result.email}`})
     } catch (err) {
