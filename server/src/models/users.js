@@ -31,6 +31,9 @@ exports.update = async function (input) {
   let query = 'UPDATE users SET ? WHERE id = ?;'
   const id = input.id
   delete input.id
+  if (input.hasOwnProperty('password')) {
+    input.password = await bcrypt.hash(input.password, SALT_ROUNDS)
+  }
   query = mysql.format(query, [input, id])
   await db.get().queryAsync(query, input)
   return exports.getAllById({'id': id})
@@ -54,6 +57,13 @@ exports.getAllByEmail = async function (input) {
   validate.input(input, ['email'])
   const query = 'SELECT * FROM users WHERE email = ?;'
   const result = await db.get().queryAsync(query, input.email)
+  return result[0]
+}
+
+exports.getAllByResetPasswordToken = async function (input) {
+  validate.input(input, ['resetPasswordToken'])
+  const query = 'SELECT * FROM users WHERE resetPasswordToken = ?;'
+  const result = await db.get().queryAsync(query, input.resetPasswordToken)
   return result[0]
 }
 

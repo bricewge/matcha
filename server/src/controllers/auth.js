@@ -1,10 +1,14 @@
 const bcrypt = require('bcryptjs')
 const jwt = require('jsonwebtoken')
+const nodemailer = require('nodemailer')
+const Promise = require('bluebird')
+const crypto = Promise.promisifyAll(require('crypto'))
 const {pick} = require('../helpers/object')
 const user = require('../models/users')
 const config = require('../config')
 const validate = require('../helpers/validate')
 const {AppError} = require('../helpers/error')
+let transporter = nodemailer.createTransport({sendmail: true})
 
 // A controller should:
 // - Sanatize data
@@ -15,6 +19,7 @@ const {AppError} = require('../helpers/error')
 // - not wanted fields
 // - wrong type
 // - already exits
+
 
 // Maybe should be merged in loggedUserData
 function jwtSignUser (user) {
@@ -33,8 +38,8 @@ module.exports = {
     const filter = ['userName', 'email', 'password', 'firstName', 'lastName']
     const input = pick(req.body, filter)
     try {
-      validate.email(req.body.email)
-      validate.password(req.body)
+      validate.email(input.email)
+      validate.password(input)
       let result = await user.create(input)
       res.json(loggedUserData(result))
     } catch (err) {
@@ -58,26 +63,38 @@ module.exports = {
     }
   },
 
-  async forgotPasword (req, res, next) {
+  async forgotPassword (req, res, next) {
     try {
       const result = await user.getAllByEmail(req.body)
-      const err = new Error('reset.failed')
+      const err = new AppError('Invalid email', 400)
       if (!result) throw err
-      else if (result.length) throw err
-      else {
-        // add token to db
-        // send email
-        // notify user
-      }
+      let token = await crypto.randomBytesAsync(20)
+      token = token.toString('hex')
+      user.update({id: result.id, resetPasswordToken: token})
+      // TODO Fix link
+      transporter.sendMail({
+        to: result.email,
+        subject: 'Matcha password reset',
+        text: `To reset your password follow this link: http://${req.headers.host}/reset/${token}\n`
+      })
+      res.json({message: `An email has been send to ${result.email}`})
     } catch (err) {
-      if (err.message === 'reset.failed') {
-        res
-          .status(400)
-          .json({error: 400, message: 'Wrong email'})
-      } else {
-        next(err)
-      }
+      next(err)
+    }
+  },
+
+  async resetPassword (req, res, next) {
+    try {
+      const input = pick(req.body, ['resetPasswordToken', 'password'])
+      let result = await user.getAllByResetPasswordToken(input)
+      if (!result) throw new AppError('Invalid token')
+      result.password = input.password
+      result.resetPasswordToken = null
+      validate.password(result)
+      result = await user.update(result)
+      res.json(loggedUserData(result))
+    } catch (err) {
+      next(err)
     }
   }
-  // TODO resetPassword: GET with token
 }

@@ -12,8 +12,11 @@ module.exports = (app) => {
   app.post('/login',
     auth.login)
 
-  // app.post('/user',
-  //          authentication.login)
+  app.post('/forgot',
+    auth.forgotPassword)
+
+  app.post('/reset',
+    auth.resetPassword)
 
   // app.post('/activate',
   //    activate.activate)
