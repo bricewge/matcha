@@ -16,7 +16,6 @@
     "bcryptjs": "^2.4.3",
     "bluebird": "^3.5.1",
     "body-parser": "^1.18.2",
-    "cors": "^2.8.4",
     "express": "^4.16.2",
     "faker": "^4.1.0",
     "helmet": "^3.11.0",

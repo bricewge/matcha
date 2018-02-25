@@ -71,11 +71,10 @@ module.exports = {
       let token = await crypto.randomBytesAsync(20)
       token = token.toString('hex')
       user.update({id: result.id, resetPasswordToken: token})
-      // TODO Fix link
       transporter.sendMail({
         to: result.email,
         subject: 'Matcha password reset',
-        text: `To reset your password follow this link: http://${req.headers.host}/reset/${token}\n`
+        text: `To reset your password follow this link: http://${req.headers.origin}/reset/${token}\n`
       })
       res.json({message: `An email has been send to ${result.email}`})
     } catch (err) {
