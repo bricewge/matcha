@@ -18,8 +18,7 @@ let transporter = nodemailer.createTransport({sendmail: true})
 // - missing fields
 // - not wanted fields
 // - wrong type
-// - already exits
-
+// - already exists
 
 // Maybe should be merged in loggedUserData
 function jwtSignUser (user) {
@@ -84,9 +83,11 @@ module.exports = {
 
   async resetPassword (req, res, next) {
     try {
+      const err = new AppError('Invalid token')
       const input = pick(req.body, ['resetPasswordToken', 'password'])
       let result = await user.getAllByResetPasswordToken(input)
-      if (!result) throw new AppError('Invalid token')
+      if (!result ||
+          input.resetPasswordToken !== result.resetPasswordToken) throw err
       result.password = input.password
       result.resetPasswordToken = null
       validate.password(result)
