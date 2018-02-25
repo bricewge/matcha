@@ -32,7 +32,7 @@ export default new Router({
       component: Forgot
     },
     {
-      path: '/reset',
+      path: '/reset/:token',
       name: 'reset',
       component: Reset
     },

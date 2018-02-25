@@ -7,8 +7,10 @@
           <v-toolbar-title class="text-xs-center">
             Register</v-toolbar-title>
         </v-card-title>
-        <v-card-text>
-          <v-form v-model="validForm" ref="form" lazy-validation>
+        <v-form v-model="validForm" ref="form"
+                @submit.prevent="register"
+                lazy-validation>
+          <v-card-text>
             <v-text-field required
                           v-model="userName"
                           name="userName"
@@ -54,20 +56,20 @@
                           :append-icon-cb="() => (hidePassword = !hidePassword)"
                           :type="hidePassword ? 'password' : 'text'"
                           ></v-text-field>
-          </v-form>
-          <v-alert
-            type="error"
-            v-model="error"
-            dismissible
-            transition="scale-transition"
-            >{{ errorMessage }}</v-alert>
-        </v-card-text>
-        <v-card-actions class="mx-2 pb-3">
-          <small>*indicates required field</small>
-          <v-spacer></v-spacer>
-          <v-btn @click="register"
-                 color="primary">Register</v-btn>
-        </v-card-actions>
+            <v-alert
+              type="error"
+              v-model="error"
+              dismissible
+              transition="scale-transition"
+              >{{ errorMessage }}</v-alert>
+          </v-card-text>
+          <v-card-actions class="mx-2 pb-3">
+            <small>*indicates required field</small>
+            <v-spacer></v-spacer>
+            <v-btn type="submit"
+                   color="primary">Register</v-btn>
+          </v-card-actions>
+        </v-form>
       </v-card>
     </v-flex>
   </v-layout>
@@ -100,6 +102,7 @@ export default {
 
   methods: {
     async register () {
+      this.samePasswords()
       if (!this.$refs.form.validate()) return
       try {
         await AuthenticationService.register({
@@ -109,6 +112,8 @@ export default {
           lastName: this.lastName,
           password: this.password
         })
+        this.$store.dispatch('setToken', response.data.token)
+        this.$store.dispatch('setUser', response.data.user)
         this.error = false
       } catch (err) {
         console.log(err.response)
@@ -118,7 +123,9 @@ export default {
     },
 
     samePasswords () {
-      if (this.password && this.password !== this.confirmPassword) {
+      if (!this.confirmPassword) {
+        this.confirmPasswordRules = [v => !!v || 'Confirm password is required']
+      }else if (this.password !== this.confirmPassword) {
         this.confirmPasswordRules = [ v => 'Password aren\'t the same' ]
       } else {
         this.confirmPasswordRules = [ ]

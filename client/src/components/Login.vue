@@ -7,8 +7,11 @@
           <v-toolbar-title class="text-xs-center">
             Login</v-toolbar-title>
         </v-card-title>
-        <v-card-text>
-          <v-form v-model="validForm" ref="form" lazy-validation>
+        <v-form v-model="validForm"
+                ref="form"
+                @submit.prevent="login"
+                lazy-validation>
+          <v-card-text>
             <v-text-field prepend-icon="person"
                           name="userName"
                           label="Username"
@@ -24,20 +27,21 @@
                           v-model="password"
                           :rules="passwordRules"
                           ></v-text-field>
-          </v-form>
-          <v-alert
-            type="error"
-            v-model="error"
-            dismissible
-            transition="scale-transition"
-            >{{ errorMessage }}</v-alert>
-        </v-card-text>
-        <v-card-actions class="mx-2 pb-3">
-          <router-link to="/forgot" class="ml-3 grey--text text--darken-1">Forgot password?</router-link></v-toolbar-title>
-          <v-spacer></v-spacer>
-          <v-btn @click="login"
-                 color="primary">Login</v-btn>
-        </v-card-actions>
+            <v-alert
+              type="error"
+              v-model="error"
+              dismissible
+              transition="scale-transition"
+              >{{ errorMessage }}</v-alert>
+          </v-card-text>
+          <v-card-actions class="mx-2 pb-3">
+            <router-link to="/forgot" class="ml-3 grey--text text--darken-1">
+              Forgot password?</router-link>
+            <v-spacer></v-spacer>
+            <v-btn type="submit"
+                   color="primary">Login</v-btn>
+          </v-card-actions>
+        </v-form>
       </v-card>
     </v-flex>
   </v-layout>
@@ -64,13 +68,14 @@ export default {
     async login () {
       if (!this.$refs.form.validate()) return
       try {
-        await AuthenticationService.login({
+        const response = await AuthenticationService.login({
           userName: this.userName,
           password: this.password
         })
+        this.$store.dispatch('setToken', response.data.token)
+        this.$store.dispatch('setUser', response.data.user)
         this.error = false
       } catch (err) {
-        console.log(err.response)
         this.error = true
         this.errorMessage = err.response.data.message
       }

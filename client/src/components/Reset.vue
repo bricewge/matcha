@@ -7,30 +7,44 @@
           <v-toolbar-title class="text-xs-center">
             Reset password</v-toolbar-title>
         </v-card-title>
-        <v-card-text>
-          <v-form v-model="validForm" ref="form" lazy-validation>
-            <v-text-field name="userName"
-                          label="TODO"
-                          type="text"
-                          v-model="userName"
-                          :rules="[v => !!v || 'Username is required']"
+        <v-form v-model="validForm" ref="form"
+                @submit.prevent="reset"
+                lazy-validation>
+          <v-card-text>
+            <v-text-field required
+                          v-model="password"
+                          v-on:input="samePasswords"
+                          name="password"
+                          ref="pasword"
+                          label="Password"
+                          :rules="passwordRules"
+                          :append-icon="hidePassword ? 'visibility' : 'visibility_off'"
+                          :append-icon-cb="() => (hidePassword = !hidePassword)"
+                          :type="hidePassword ? 'password' : 'text'"
                           ></v-text-field>
-          </v-form>
-          <v-alert
-            type="error"
-            v-model="error"
-            dismissible
-            transition="scale-transition"
-            >
-            {{ errorMessage }}
-          </v-alert>
-        </v-card-text>
-        <v-card-actions class="mx-2 pb-3">
-          <router-link to="/forgot" class="ml-3 grey--text text--darken-1">Forgot password?</router-link></v-toolbar-title>
-          <v-spacer></v-spacer>
-          <v-btn @click="login"
-                 color="primary">Login</v-btn>
-        </v-card-actions>
+            <v-text-field required
+                          v-model="confirmPassword"
+                          v-on:input="samePasswords"
+                          name="confirmPassword"
+                          label="Confirm password"
+                          :rules="confirmPasswordRules"
+                          :append-icon="hidePassword ? 'visibility' : 'visibility_off'"
+                          :append-icon-cb="() => (hidePassword = !hidePassword)"
+                          :type="hidePassword ? 'password' : 'text'"
+                          ></v-text-field>
+            <v-alert
+              type="error"
+              v-model="error"
+              dismissible
+              transition="scale-transition"
+              >{{ errorMessage }}</v-alert>
+          </v-card-text>
+          <v-card-actions class="mx-2 pb-3">
+            <v-spacer></v-spacer>
+            <v-btn type="submit"
+                   color="primary">Reset</v-btn>
+          </v-card-actions>
+        </v-form>
       </v-card>
     </v-flex>
   </v-layout>
@@ -39,29 +53,45 @@
 
 <script>
 import AuthenticationService from '@/services/AuthenticationService'
+import {validPassword} from '@/util/validation'
+
 export default {
   data () {
     return {
-      validForm: true,
-      userName: '',
       password: '',
-      error: false,
+      passwordRules: [ validPassword ],
+      confirmPassword: '',
+      confirmPasswordRules: [ ],
+      hidePassword: true,
+      validForm: true,
+      error: null,
       errorMessage : ''
     }
   },
   methods: {
-    async login () {
+    async reset () {
+      this.samePasswords()
       if (!this.$refs.form.validate()) return
       try {
-        const response = await AuthenticationService.login({
-          userName: this.userName,
+        const response = await AuthenticationService.reset({
+          resetPasswordToken: this.$route.params.token,
           password: this.password
         })
-        console.log(response.data)
+        // TODO Redirect to /login
       } catch (err) {
         console.log(err)
         this.error = true
         this.errorMessage = err.response.data.message
+      }
+    },
+
+    samePasswords () {
+      if (!this.confirmPassword) {
+        this.confirmPasswordRules = [v => !!v || 'Confirm password is required']
+      }else if (this.password !== this.confirmPassword) {
+        this.confirmPasswordRules = [ v => 'Password aren\'t the same' ]
+      } else {
+        this.confirmPasswordRules = [ ]
       }
     }
   }
