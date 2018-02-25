@@ -20,6 +20,6 @@ module.exports = (app) => {
     auth.resetPassword)
 
   app.put('/users',
-    uploading,
+    uploading.array('pictures', 5),
     users.update)
 }

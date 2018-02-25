@@ -21,6 +21,7 @@ module.exports = {
       if (input.hasOwnProperty('email')) validate.email(input.email)
       if (input.hasOwnProperty('password')) validate.password(input)
       // const result = await user.update(input)
+      res.json({msg: 'TODO'})
     } catch (err) {
       next(err)
     }
