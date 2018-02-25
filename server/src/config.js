@@ -8,5 +8,9 @@ module.exports = {
   },
   authentication: {
     jwtSecret: process.env.JWT_SECRET || 'secret'
+  },
+  upload: {
+    dest: 'public/uploads/',
+    limit: {fileSize: 5000000, files: 5}
   }
 }

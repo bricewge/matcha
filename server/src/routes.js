@@ -1,5 +1,9 @@
+const multer = require('multer')
+const config = require('./config')
 const auth = require('./controllers/auth')
-// const activate = require('./middlewares/activate')
+const users = require('./controllers/users')
+
+const uploading = multer(config.upload)
 
 module.exports = (app) => {
   app.get('/', (req, res) => {
@@ -8,16 +12,14 @@ module.exports = (app) => {
 
   app.post('/register',
     auth.register)
-
   app.post('/login',
     auth.login)
-
   app.post('/forgot',
     auth.forgotPassword)
-
   app.post('/reset',
     auth.resetPassword)
 
-  // app.post('/activate',
-  //    activate.activate)
+  app.put('/users',
+    uploading,
+    users.update)
 }
