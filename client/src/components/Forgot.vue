@@ -26,7 +26,7 @@
         <v-card-actions class="mx-2 pb-3">
           <router-link to="/login" class="ml-3 password grey--text text--darken-1">Login</router-link></v-toolbar-title>
           <v-spacer></v-spacer>
-          <v-btn @click="login"
+          <v-btn @click="forgot"
                  color="primary">Send me instructions</v-btn>
         </v-card-actions>
       </v-card>
@@ -41,7 +41,6 @@ export default {
   data () {
     return {
       validForm: true,
-      userName: '',
       email: '',
       error: false,
       errorMessage : ''
@@ -49,9 +48,9 @@ export default {
   },
   methods: {
     async forgot () {
-      if (!this.$refs.form.validate()) return
+      // if (!this.$refs.form.validate()) return
       try {
-        const response = await AuthenticationService.login({
+        const response = await AuthenticationService.forgot({
           email: this.email
         })
       } catch (err) {
