@@ -22,7 +22,7 @@
                           id="password"
                           type="password"
                           v-model="password"
-                          :rules="[v => !!v || 'Password is required']"
+                          :rules="passwordRules"
                           ></v-text-field>
           </v-form>
           <v-alert
@@ -46,27 +46,31 @@
 
 <script>
 import AuthenticationService from '@/services/AuthenticationService'
+import {validPassword} from '@/util/validation'
+
 export default {
   data () {
     return {
       validForm: true,
       userName: '',
       password: '',
+      passwordRules: [validPassword],
       error: false,
       errorMessage : ''
     }
   },
+
   methods: {
     async login () {
       if (!this.$refs.form.validate()) return
       try {
-        const response = await AuthenticationService.login({
+        await AuthenticationService.login({
           userName: this.userName,
           password: this.password
         })
-        console.log(response.data)
+        this.error = false
       } catch (err) {
-        console.log(err)
+        console.log(err.response)
         this.error = true
         this.errorMessage = err.response.data.message
       }

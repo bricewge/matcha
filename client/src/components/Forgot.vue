@@ -8,13 +8,16 @@
             Forgot your password?</v-toolbar-title>
         </v-card-title>
         <v-card-text>
-          <v-form v-model="validForm" ref="form" lazy-validation>
-            <v-text-field prepend-icon="mail"
-                          name="email"
-                          label="Email"
-                          v-model="email"
-                          :rules="[v => !!v || 'Email is required']"
-                          ></v-text-field>
+          <v-form
+            v-model="validForm"
+            ref="form"
+            lazy-validation>
+            <v-text-field
+              name="email"
+              label="Email"
+              v-model="email"
+              :rules="emailRules"
+              ></v-text-field>
           </v-form>
           <v-alert
             type="error"
@@ -24,10 +27,15 @@
             >{{ errorMessage }}</v-alert>
         </v-card-text>
         <v-card-actions class="mx-2 pb-3">
-          <router-link to="/login" class="ml-3 password grey--text text--darken-1">Login</router-link></v-toolbar-title>
+          <router-link
+            to="/login"
+            class="ml-3 password grey--text text--darken-1"
+            >Login</router-link>
           <v-spacer></v-spacer>
-          <v-btn @click="forgot"
-                 color="primary">Send me instructions</v-btn>
+          <v-btn
+            @click="forgot"
+            color="primary"
+            >Send me instructions</v-btn>
         </v-card-actions>
       </v-card>
     </v-flex>
@@ -37,22 +45,26 @@
 
 <script>
 import AuthenticationService from '@/services/AuthenticationService'
+import {validEmail} from '@/util/validation'
+
 export default {
   data () {
     return {
       validForm: true,
       email: '',
+      emailRules: [validEmail],
       error: false,
       errorMessage : ''
     }
   },
   methods: {
     async forgot () {
-      // if (!this.$refs.form.validate()) return
+      if (!this.$refs.form.validate()) return
       try {
         const response = await AuthenticationService.forgot({
           email: this.email
         })
+        this.error = false
       } catch (err) {
         console.log(err)
         this.error = true

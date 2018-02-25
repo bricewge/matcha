@@ -8,131 +8,123 @@
             Register</v-toolbar-title>
         </v-card-title>
         <v-card-text>
-          <v-form v-model="valid" ref="form" lazy-validation>
-            <v-text-field
-                          name="userName"
+          <v-form v-model="validForm" ref="form" lazy-validation>
+            <v-text-field required
                           v-model="userName"
-                          :rules="userNameRules"
+                          name="userName"
                           label="Username"
-                          type="text"
-                          required
-                          ></v-text-field>
-            <v-text-field
-                          name="email"
+                          :rules="[v => !!v || 'Username is required']"
+                          type="text"></v-text-field>
+            <v-text-field required
                           v-model="email"
-                          :rules="emailRules"
+                          name="email"
                           label="Email"
-                          type="text"
-                          required
-                          ></v-text-field>
-            <v-text-field
-                          name="firstName"
+                          :rules="emailRules"
+                          type="text"></v-text-field>
+            <v-text-field required
                           v-model="firstName"
-                          :rules="firstNameRules"
+                          name="firstName"
                           label="First name"
-                          type="text"
-                          required
-                          ></v-text-field>
-            <v-text-field
-                          name="lastName"
+                          :rules="[v => !!v || 'First name is required']"
+                          type="text"></v-text-field>
+            <v-text-field required
                           v-model="lastName"
-                          :rules="lastNameRules" 
+                          name="lastName"
                           label="Last name"
-                          type="text"
-                          required
-                          ></v-text-field>
-            <v-text-field
+                          :rules="[v => !!v || 'Last name is required']"
+                          type="text"></v-text-field>
+            <v-text-field required
+                          v-model="password"
+                          v-on:input="samePasswords"
                           name="password"
+                          ref="pasword"
                           label="Password"
-                          hint="At least 8 characters"
-                          :counter="8"
+                          :rules="passwordRules"
                           :append-icon="hidePassword ? 'visibility' : 'visibility_off'"
                           :append-icon-cb="() => (hidePassword = !hidePassword)"
                           :type="hidePassword ? 'password' : 'text'"
-                          required
                           ></v-text-field>
-            <v-text-field
+            <v-text-field required
+                          v-model="confirmPassword"
+                          v-on:input="samePasswords"
                           name="confirmPassword"
-                          required
                           label="Confirm password"
-                          :counter="8"
+                          :rules="confirmPasswordRules"
                           :append-icon="hidePassword ? 'visibility' : 'visibility_off'"
                           :append-icon-cb="() => (hidePassword = !hidePassword)"
                           :type="hidePassword ? 'password' : 'text'"
                           ></v-text-field>
-                       <v-btn @click="register"
-                       :disabled="!valid"
-                       color="primary">Register</v-btn>
-                          <v-btn @click="clear">clear</v-btn>
-                </v-form>
-                <small>*Indicates required field</small>
-              </v-card-text>
-              <v-card-actions>
-                <v-spacer></v-spacer>
-              </v-card-actions>
-            </v-card>
-          </v-flex>
-        </v-layout>
+          </v-form>
+          <v-alert
+            type="error"
+            v-model="error"
+            dismissible
+            transition="scale-transition"
+            >{{ errorMessage }}</v-alert>
+        </v-card-text>
+        <v-card-actions class="mx-2 pb-3">
+          <small>*indicates required field</small>
+          <v-spacer></v-spacer>
+          <v-btn @click="register"
+                 color="primary">Register</v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-flex>
+  </v-layout>
 </v-container>
 </template>
 
-<!-- TODO Manage error -->
-<!-- TODO Disable buttom until all input is valid -->
-<!-- TODO Don't repeat password show/hide code -->
 <script>
 import AuthenticationService from '@/services/AuthenticationService'
-import axios from 'axios'
+import {validPassword, validEmail} from '@/util/validation'
+
 
 export default {
-  data: () => ({
-      valid: true,
+  data () {
+    return {
       userName: '',
-      userNameRules: [
-        v => !!v || 'userName is required'
-      ],
       email: '',
-      emailRules: [
-        v => !!v || 'E-mail is required',
-        v => /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/.test(v) || 'E-mail must be valid'
-      ],
+      emailRules: [ validEmail ],
       firstName: '',
-      firstNameRules: [
-        v => !!v || 'First Name is required'
-      ],
       lastName: '',
-      lastNameRules: [
-        v => !!v || 'Last Name is required'
-      ],
       password: '',
-      passwordRules: [
-        v => !!v || 'Password is required',
-        v => (v && v.length > 7) || 'Password must be 8 characters or more'
-      ],
+      passwordRules: [ validPassword ],
       confirmPassword: '',
+      confirmPasswordRules: [ ],
       hidePassword: true,
-      error: null
-  }),
+      validForm: true,
+      error: null,
+      errorMessage : ''
+    }
+  },
 
   methods: {
     async register () {
-      if (this.$refs.form.validate()) {
-        try {
-          await AuthenticationService.register({
-            userName: this.userName,
-            email: this.email,
-            firstName: this.firstName,
-            lastName: this.lastName,
-            password: this.password
-          })
-        } catch (err) {
-          this.error = err.response.data.message
-        }
+      if (!this.$refs.form.validate()) return
+      try {
+        await AuthenticationService.register({
+          userName: this.userName,
+          email: this.email,
+          firstName: this.firstName,
+          lastName: this.lastName,
+          password: this.password
+        })
+        this.error = false
+      } catch (err) {
+        console.log(err.response)
+        this.error = true
+        this.errorMessage = err.response.data.message
       }
     },
-       clear () {
-        this.$refs.form.reset()
+
+    samePasswords () {
+      if (this.password && this.password !== this.confirmPassword) {
+        this.confirmPasswordRules = [ v => 'Password aren\'t the same' ]
+      } else {
+        this.confirmPasswordRules = [ ]
+      }
+    }
   }
-}
 }
 </script>
 
