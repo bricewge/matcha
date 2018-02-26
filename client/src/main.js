@@ -7,6 +7,7 @@ import Vuetify from 'vuetify'
 import { sync } from 'vuex-router-sync'
 import 'vuetify/dist/vuetify.min.css'
 import store from '@/store/index'
+
 Vue.config.productionTip = true
 
 Vue.use(Vuetify)

@@ -15,10 +15,23 @@
     </v-btn>
     <v-btn flat class="btn--plain"
            router to="register"
+           v-if="!$store.state.isUserLoggedIn"
            >Sign In</v-btn>
+    <v-btn flat class="btn--plain"
+           router to="login"
+           v-if="$store.state.isUserLoggedIn"
+           >Log out</v-btn>
+    <v-avatar color="primary"
+              :size=36
+              v-if="$store.state.isUserLoggedIn">
+      <span class="white--text headline">J</span>
+    </v-avatar>
   </v-toolbar>
 </template>
 
+<!-- TODO Logout should logout and redirect to login -->
+<!-- TODO Logout should be under a popup on the login account -->
+<!-- TODO If the user has a profile picture display it -->
 <script>
 export default {
 }

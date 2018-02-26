@@ -20,11 +20,12 @@
               :rules="emailRules"
               ></v-text-field>
             <v-alert
-              type="error"
-              v-model="error"
+              ref="alert"
+              :type="alertType"
+              v-model="alert"
               dismissible
               transition="scale-transition"
-              >{{ errorMessage }}</v-alert>
+              >{{ alertMessage }}</v-alert>
           </v-card-text>
           <v-card-actions class="mx-2 pb-3">
             <router-link
@@ -54,22 +55,28 @@ export default {
       validForm: true,
       email: '',
       emailRules: [validEmail],
-      error: false,
-      errorMessage : ''
+      alert: false,
+      alertType: 'info',
+      alertMessage : ''
     }
   },
+
   methods: {
     async forgot () {
+      console.log(this.$refs.alert)
       if (!this.$refs.form.validate()) return
       try {
         const response = await AuthenticationService.forgot({
           email: this.email
         })
-        this.error = false
+        this.alertType = 'success'
+        this.alert = true
+        this.alertMessage = response.data.message
       } catch (err) {
         console.log(err)
-        this.error = true
-        this.errorMessage = err.response.data.message
+        this.alertType = 'error',
+        this.alert = true
+        this.alertMessage = err.response.data.message
       }
     }
   }

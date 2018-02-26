@@ -77,7 +77,7 @@ export default {
           resetPasswordToken: this.$route.params.token,
           password: this.password
         })
-        // TODO Redirect to /login
+        this.$router.push('/login')
       } catch (err) {
         console.log(err)
         this.error = true
