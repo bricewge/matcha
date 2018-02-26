@@ -8,6 +8,8 @@ import Activate from '@/components/Activate'
 
 Vue.use(Router)
 
+// TODO Add default route
+
 export default new Router({
   mode: 'history',
   routes: [
