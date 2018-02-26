@@ -32,7 +32,7 @@ async function dbReset () {
   const configRoot = {
     host: config.host,
     user: 'root',
-    password: '',
+    password: config.rootPassword,
     multipleStatements: true
   }
   const dbRoot = Promise.promisifyAll(mysql.createConnection(configRoot))
