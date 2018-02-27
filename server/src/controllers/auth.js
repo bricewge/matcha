@@ -28,8 +28,11 @@ function jwtSignUser (user) {
 }
 
 function loggedUserData (user) {
-  user = pick(user, ['id', 'userName', 'activation'])
-  return {user, token: jwtSignUser(user)}
+  user = pick(user, ['id', 'userName', 'email', 'firstName', 'lastName',
+    'activation', 'sex', 'sexualPreference', 'fame',
+    'birthday', 'geography', 'profilePicture', 'location'])
+  const jwtPayload = pick(user, ['id', 'activation'])
+  return {user, token: jwtSignUser(jwtPayload)}
 }
 
 module.exports = {
