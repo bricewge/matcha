@@ -28,17 +28,17 @@
     <v-avatar color="primary"
               :size=36
               slot="activator">
-      <span class="white--text headline">J</span>
+      <span class="white--text headline">{{ user.userName[0].toUpperCase() }}</span>
     </v-avatar>
     <v-card>
         <v-list >
           <v-list-tile avatar>
             <v-list-tile-avatar>
-              <img src="" alt="Profile">
+              <img :src="user.profilePicture" alt="Profile picture">
             </v-list-tile-avatar>
             <v-list-tile-content>
-              <v-list-tile-title>Username</v-list-tile-title>
-              <v-list-tile-sub-title>Email</v-list-tile-sub-title>
+              <v-list-tile-title> {{ capitalize(user.firstName) }} {{user.lastName.toUpperCase() }}</v-list-tile-title>
+              <v-list-tile-sub-title>{{ user.email }}</v-list-tile-sub-title>
             </v-list-tile-content>
           </v-list-tile>
         </v-list>
@@ -61,6 +61,8 @@
 <!-- TODO Logout should logout and redirect to login -->
 <!-- TODO If the user has a profile picture display it -->
 <script>
+import { mapState } from 'vuex'
+
 export default {
     data () {
         return {
@@ -71,7 +73,18 @@ export default {
                 { title: 'Log out', icon: 'lock', action: 'logout' }
             ]
         }
-    }
+    },
+
+    computed: {
+        ...mapState(['user'])
+    },
+
+    methods: {
+      capitalize (string) {
+        return string[0].toUpperCase() + string.slice(1).toLowerCase()
+      }
+}
+
 }
 </script>
 
