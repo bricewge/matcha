@@ -105,7 +105,7 @@ export default {
       this.samePasswords()
       if (!this.$refs.form.validate()) return
       try {
-        await AuthenticationService.register({
+        const response = await AuthenticationService.register({
           userName: this.userName,
           email: this.email,
           firstName: this.firstName,
@@ -116,7 +116,6 @@ export default {
         this.$store.dispatch('setUser', response.data.user)
         this.error = false
       } catch (err) {
-        console.log(err.response)
         this.error = true
         this.errorMessage = err.response.data.message
       }
