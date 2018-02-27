@@ -28,7 +28,7 @@
     <v-avatar color="primary"
               :size=36
               slot="activator">
-      <span class="white--text headline">{{ user.userName[0].toUpperCase() }}</span>
+      <span class="white--text headline">{{ userNameFirstLetter }}</span>
     </v-avatar>
     <v-card>
         <v-list >
@@ -37,7 +37,7 @@
               <img :src="user.profilePicture" alt="Profile picture">
             </v-list-tile-avatar>
             <v-list-tile-content>
-              <v-list-tile-title> {{ capitalize(user.firstName) }} {{user.lastName.toUpperCase() }}</v-list-tile-title>
+              <v-list-tile-title> {{ firstNameCapitalize }} {{ lastNameUpperCase }}</v-list-tile-title>
               <v-list-tile-sub-title>{{ user.email }}</v-list-tile-sub-title>
             </v-list-tile-content>
           </v-list-tile>
@@ -63,6 +63,10 @@
 <script>
 import { mapState } from 'vuex'
 
+function capitalize (string) {
+    return string[0].toUpperCase() + string.slice(1).toLowerCase()
+}
+
 export default {
     data () {
         return {
@@ -76,15 +80,17 @@ export default {
     },
 
     computed: {
-        ...mapState(['user'])
-    },
-
-    methods: {
-      capitalize (string) {
-        return string[0].toUpperCase() + string.slice(1).toLowerCase()
-      }
-}
-
+        ...mapState(['user']),
+        userNameFirstLetter: function() {
+            return this.user.userName[0].toUpperCase()
+        },
+        firstNameCapitalize: function() {
+            return capitalize(this.user.firstName)
+        },
+        lastNameUpperCase: function() {
+          return this.user.lastName.toUpperCase()
+        }
+    }
 }
 </script>
 
