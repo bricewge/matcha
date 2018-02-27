@@ -1,0 +1,41 @@
+version: '3.1'
+
+services:
+  client:
+    build:
+      context: ./client
+    ports:
+      - "8080:8080"
+    environment:
+      - HOST=0.0.0.0
+      - API_HOST=server
+    volumes:
+      - ./client:/opt/matcha-client:delegated
+      - notused2:/opt/matcha-client/node_modules
+  server:
+    build:
+      context: ./server
+    ports:
+      - "8081:8081"
+    environment:
+      - DB_HOST=db
+    depends_on:
+      - db
+    volumes:
+      - ./server:/opt/matcha-server:delegated
+      - notused:/opt/matcha-server/node_modules
+  db:
+    image: mariadb
+    restart: always
+    environment:
+      - MYSQL_ROOT_PASSWORD=root
+      - MYSQL_DATABASE=matcha
+      - MYSQL_USER=matcha
+      - MYSQL_PASSWORD=matcha
+    volumes:
+      - ./db:/var/lib/mysql
+      - ./server/init.sql:/docker-entrypoint-initdb.d/1-init.sql
+
+volumes:
+    notused:
+    notused2:
