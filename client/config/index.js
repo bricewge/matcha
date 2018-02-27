@@ -3,6 +3,10 @@
 // see http://vuejs-templates.github.io/webpack for documentation.
 
 const path = require('path')
+const api = {
+  host: process.env.API_HOST || 'localhost',
+  port: process.env.API_PORT || 8081
+}
 
 module.exports = {
   dev: {
@@ -13,7 +17,7 @@ module.exports = {
     proxyTable: {
       // Proxy all requests to the server backend
       '/api': {
-        target: 'http://localhost:8081',
+        target: `http://${api.host}:${api.port}`,
         changeOrigin: true,
         pathRewrite: {
           '^/api': ''

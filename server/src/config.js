@@ -1,11 +1,14 @@
 module.exports = {
   port: process.env.PORT || 8081,
   db: {
-    host: process.env.DB_NAME || 'localhost',
+    host: process.env.DB_HOST || 'localhost',
     user: process.env.DB_USER || 'matcha',
     password: process.env.DB_PASS || 'matcha',
     database: process.env.DB_NAME || 'matcha',
-    rootPassword: process.env.DB_ROOTPASS || ''
+    root: {
+      user: process.env.DB_ROOTUSER || 'root',
+      password: process.env.DB_ROOTPASS || 'root'
+    }
   },
   authentication: {
     jwtSecret: process.env.JWT_SECRET || 'secret'

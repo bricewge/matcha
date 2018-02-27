@@ -31,8 +31,9 @@ async function main () {
 async function dbReset () {
   const configRoot = {
     host: config.host,
-    user: 'root',
-    password: config.rootPassword,
+    port: config.port,
+    user: config.root.user,
+    password: config.root.password,
     multipleStatements: true
   }
   const dbRoot = Promise.promisifyAll(mysql.createConnection(configRoot))
@@ -73,11 +74,11 @@ async function dbUserExists (db, user) {
 }
 
 async function dbUserCreate (db, config) {
-  var query = `CREATE USER IF NOT EXISTS ?@? IDENTIFIED BY ?;
+  var query = `CREATE USER ?@? IDENTIFIED BY ?;
   GRANT ALL ON ??.* TO ?@?;
   FLUSH PRIVILEGES;`
   try {
-    db.query(query, [config.user, config.host, config.password, config.database, config.user, config.host])
+    await db.queryAsync(query, [config.user, config.host, config.password, config.database, config.user, config.host])
   } catch (err) { console.error(err.message); return }
   console.log(`DB user ${config.user} as been created`)
 }
