@@ -14,9 +14,8 @@ export default new Router({
   mode: 'history',
   routes: [
     {
-      path: '/',
-      name: 'index',
-      component: Login
+      path: '*',
+      redirect: '/'
     },
     {
       path: '/register',
@@ -24,7 +23,7 @@ export default new Router({
       component: Register
     },
     {
-      path: '/login',
+      path: '/',
       name: 'login',
       component: Login
     },
