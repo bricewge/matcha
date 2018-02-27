@@ -9,6 +9,8 @@ services:
     environment:
       - HOST=0.0.0.0
       - API_HOST=server
+    depends_on:
+      - server
     volumes:
       - ./client:/opt/matcha-client:delegated
       - notused2:/opt/matcha-client/node_modules
