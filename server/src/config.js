@@ -10,6 +10,10 @@ module.exports = {
       password: process.env.DB_ROOTPASS || 'root'
     }
   },
+  smtp: {
+    host: process.env.SMTP_HOST || 'localhost',
+    port: process.env.SMTP_PORT || 25
+  },
   authentication: {
     jwtSecret: process.env.JWT_SECRET || 'secret'
   },

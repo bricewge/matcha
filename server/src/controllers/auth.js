@@ -8,7 +8,11 @@ const user = require('../models/users')
 const config = require('../config')
 const validate = require('../helpers/validate')
 const {AppError} = require('../helpers/error')
-let transporter = nodemailer.createTransport({sendmail: true})
+const transporter = nodemailer.createTransport({
+  host: config.smtp.host,
+  port: config.smtp.port,
+  ignoreTLS: true
+})
 
 // A controller should:
 // - Sanatize data

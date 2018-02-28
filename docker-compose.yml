@@ -21,8 +21,10 @@ services:
       - "8081:8081"
     environment:
       - DB_HOST=db
+      - SMTP_HOST=mail
     depends_on:
       - db
+      - mail
     command: sh -c '/opt/wait-for db:3306 -- npm start'
     volumes:
       - ./server:/opt/matcha-server:delegated
@@ -37,6 +39,11 @@ services:
       - MYSQL_PASSWORD=matcha
     volumes:
       - ./server/init.sql:/docker-entrypoint-initdb.d/1-init.sql
+  mail:
+    image: djfarrelly/maildev
+    ports:
+      - "8082:80"
+      - "1025:25"
 
 volumes:
     notused:

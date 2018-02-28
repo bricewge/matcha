@@ -6,7 +6,7 @@ const helmet = require('helmet')
 const db = require('./db')
 const config = require('./config')
 
-async function main() {
+async function main () {
   const app = express()
   app.use(morgan('combined'))
   app.use(bodyParser.json())
@@ -27,8 +27,8 @@ async function main() {
   // Gracefully exit nodemon wants to kill the process
   process.once('SIGUSR2', function () {
     db.disconnect()
-    process.kill(process.pid, 'SIGUSR2');
-  });
+    process.kill(process.pid, 'SIGUSR2')
+  })
 
   app.listen(config.port, function () {
     console.log(`Server listening on port ${config.port}`)
