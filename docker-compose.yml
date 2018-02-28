@@ -23,6 +23,7 @@ services:
       - DB_HOST=db
     depends_on:
       - db
+    command: sh -c '/opt/wait-for db:3306 -- npm start'
     volumes:
       - ./server:/opt/matcha-server:delegated
       - notused:/opt/matcha-server/node_modules
@@ -35,7 +36,6 @@ services:
       - MYSQL_USER=matcha
       - MYSQL_PASSWORD=matcha
     volumes:
-      - ./db:/var/lib/mysql
       - ./server/init.sql:/docker-entrypoint-initdb.d/1-init.sql
 
 volumes:
