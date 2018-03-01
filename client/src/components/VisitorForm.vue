@@ -22,7 +22,7 @@
               transition="scale-transition"
               >{{ alert.message }}</v-alert>
           </v-card-text>
-          <v-card-actions class="pb-3">
+          <v-card-actions class="pb-3 mx-1">
            <slot name="actions">No actions defined</slot>
           </v-card-actions>
         </v-form>
@@ -58,5 +58,8 @@ export default {
 }
 </script>
 
-<style scoped>
+<style>
+.layout.slot a {
+    align-self: center;
+}
 </style>

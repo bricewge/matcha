@@ -4,23 +4,24 @@
   :alert="alert"
   :form="form"
   ref="visitorForm">
-  <v-layout slot="fields">
+  <div slot="fields">
     <v-text-field
       name="email"
       label="Email"
       v-model="email"
       :rules="emailRules"
       ></v-text-field>
-  </v-layout>
+  </div>
   <v-layout slot="actions">
     <router-link
       to="/login"
-      class="ml-3 password grey--text text--darken-1"
+      class="ml-1 grey--text text--darken-1"
       >Login</router-link>
     <v-spacer></v-spacer>
     <v-btn
       type="submit"
       color="primary"
+      :disabled="!buttonEnabled"
       >Send me instructions</v-btn>
   </v-layout>
 </visitor-form>
@@ -40,6 +41,7 @@ export default {
     return {
       email: '',
       emailRules: [validEmail],
+      buttonEnabled: true,
       alert: { type: 'error', visible: false, message: '' },
       form: { calid: 'false', submit: this.forgot }
     }
@@ -55,6 +57,7 @@ export default {
         this.alert.type = 'success'
         this.alert.message = response.data.message
         this.alert.visible = true
+        this.buttonEnabled = false
       } catch (err) {
         this.alert.type = 'error'
         this.alert.message = err.response.data.message
