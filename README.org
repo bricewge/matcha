@@ -6,7 +6,8 @@
 As a premillinary you need to install Docker for macOS and create a machine to
 host the containers - we assume it's name is =matcha=.
 #+BEGIN_SRC sh
-eval $(docker-machine env matcha)
-docker-compose down ; docker-compose up
+  docker-machine start matcha
+  eval $(docker-machine env matcha)
+  docker-compose down ; docker-compose up
 #+END_SRC
 The app is now accesible at this ip =docker-machine ip matcha= on port =8080=.

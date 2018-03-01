@@ -16,7 +16,9 @@ services:
       - notused2:/opt/matcha-client/node_modules
     deploy:
       restart_policy:
-        condition: on-failure
+        condition: always
+        delay: 5s
+        max_attempts: 3
   server:
     build:
       context: ./server
@@ -34,7 +36,7 @@ services:
       - notused:/opt/matcha-server/node_modules
     deploy:
       restart_policy:
-        condition: on-failure
+        condition: always
   db:
     image: mariadb
     restart: always
