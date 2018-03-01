@@ -4,11 +4,9 @@ import Register from '@/components/Register'
 import Login from '@/components/Login'
 import Forgot from '@/components/Forgot'
 import Reset from '@/components/Reset'
-import Activate from '@/components/Activate'
+import Settings from '@/components/Settings'
 
 Vue.use(Router)
-
-// TODO Add default route
 
 export default new Router({
   mode: 'history',
@@ -38,9 +36,9 @@ export default new Router({
       component: Reset
     },
     {
-      path: '/activate',
-      name: 'activate',
-      component: Activate
+      path: '/settings',
+      name: 'settings',
+      component: Settings
     }
   ]
 })
