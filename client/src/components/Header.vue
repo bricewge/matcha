@@ -31,28 +31,28 @@
       <span class="white--text headline">{{ userNameFirstLetter }}</span>
     </v-avatar>
     <v-card>
-        <v-list >
-          <v-list-tile avatar>
-            <v-list-tile-avatar>
-              <img :src="user.profilePicture" alt="Profile picture">
-            </v-list-tile-avatar>
-            <v-list-tile-content>
-              <v-list-tile-title> {{ firstNameCapitalize }} {{ lastNameUpperCase }}</v-list-tile-title>
-              <v-list-tile-sub-title>{{ user.email }}</v-list-tile-sub-title>
-            </v-list-tile-content>
-          </v-list-tile>
-        </v-list>
-        <v-divider></v-divider>
-    <v-list>
-      <v-list-tile v-for="item in items" :key="item.title" @click="">
-        <v-list-tile-action>
-          <v-icon>{{ item.icon }}</v-icon>
-        </v-list-tile-action>
-        <v-list-tile-content>
-          <v-list-tile-title>{{ item.title }}</v-list-tile-title>
-        </v-list-tile-content>
-      </v-list-tile>
-    </v-list>
+      <v-list >
+        <v-list-tile avatar>
+          <v-list-tile-avatar>
+            <img :src="user.profilePicture" alt="Profile picture">
+          </v-list-tile-avatar>
+          <v-list-tile-content>
+            <v-list-tile-title> {{ firstNameCapitalize }} {{ lastNameUpperCase }}</v-list-tile-title>
+            <v-list-tile-sub-title>{{ user.email }}</v-list-tile-sub-title>
+          </v-list-tile-content>
+        </v-list-tile>
+      </v-list>
+      <v-divider></v-divider>
+      <v-list>
+        <v-list-tile v-for="item in items" :key="item.title" @click="">
+          <v-list-tile-action>
+            <v-icon>{{ item.icon }}</v-icon>
+          </v-list-tile-action>
+          <v-list-tile-content>
+            <v-list-tile-title>{{ item.title }}</v-list-tile-title>
+          </v-list-tile-content>
+        </v-list-tile>
+      </v-list>
     </v-card>
   </v-menu>
 </v-toolbar>
@@ -64,7 +64,7 @@
 import { mapState } from 'vuex'
 
 function capitalize (string) {
-    return string[0].toUpperCase() + string.slice(1).toLowerCase()
+  return string[0].toUpperCase() + string.slice(1).toLowerCase()
 }
 
 export default {
@@ -80,18 +80,18 @@ export default {
     }
   },
 
-    computed: {
-        ...mapState(['user']),
-        userNameFirstLetter: function() {
-            return this.user.userName[0].toUpperCase()
-        },
-        firstNameCapitalize: function() {
-            return capitalize(this.user.firstName)
-        },
-        lastNameUpperCase: function() {
-          return this.user.lastName.toUpperCase()
-        }
+  computed: {
+    ...mapState(['user']),
+    userNameFirstLetter: function () {
+      return this.user.userName[0].toUpperCase()
+    },
+    firstNameCapitalize: function () {
+      return capitalize(this.user.firstName)
+    },
+    lastNameUpperCase: function () {
+      return this.user.lastName.toUpperCase()
     }
+  }
 }
 </script>
 
