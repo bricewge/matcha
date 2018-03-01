@@ -68,16 +68,17 @@ function capitalize (string) {
 }
 
 export default {
-    data () {
-        return {
-            menu: null,
-            items: [
-                { title: 'My profile', icon: 'account_box', action: 'profile' },
-                { title: 'Settings', icon: 'settings', action: 'settings' },
-                { title: 'Log out', icon: 'lock', action: 'logout' }
-            ]
-        }
-    },
+  data () {
+    return {
+      menu: null,
+      items: [
+        { title: 'My profile', icon: 'account_box', action: 'profile' },
+        { title: 'Chat', icon: 'chat', action: 'chat' },
+        { title: 'Settings', icon: 'settings', action: 'settings' },
+        { title: 'Log out', icon: 'lock', action: 'logout' }
+      ]
+    }
+  },
 
     computed: {
         ...mapState(['user']),
