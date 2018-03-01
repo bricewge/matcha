@@ -14,6 +14,9 @@ services:
     volumes:
       - ./client:/opt/matcha-client:delegated
       - notused2:/opt/matcha-client/node_modules
+    deploy:
+      restart_policy:
+        condition: on-failure
   server:
     build:
       context: ./server
@@ -29,6 +32,9 @@ services:
     volumes:
       - ./server:/opt/matcha-server:delegated
       - notused:/opt/matcha-server/node_modules
+    deploy:
+      restart_policy:
+        condition: on-failure
   db:
     image: mariadb
     restart: always
