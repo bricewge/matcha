@@ -1,82 +1,86 @@
 <template>
-<visitor-form
-  title="Reset your password"
-  :alert="alert"
-  :form="form"
-  ref="visitorForm">
-  <div slot="fields">
-    <v-text-field
-      required
-      v-model="userName"
-      name="userName"
-      label="Username"
-      :rules="[v => !!v || 'Username is required']"
-      type="text"
-      ></v-text-field>
-    <v-text-field
-      required
-      v-model="email"
-      name="email"
-      label="Email"
-      :rules="emailRules"
-      type="text"
-      ></v-text-field>
-    <v-text-field
-      required
-      v-model="firstName"
-      name="firstName"
-      label="First name"
-      :rules="[v => !!v || 'First name is required']"
-      type="text"
-      ></v-text-field>
-    <v-text-field
-      required
-      v-model="lastName"
-      name="lastName"
-      label="Last name"
-      :rules="[v => !!v || 'Last name is required']"
-      type="text"
-      ></v-text-field>
-    <v-text-field
-      required
-      v-model="password"
-      v-on:input="samePasswords"
-      name="password"
-      label="Password"
-      :rules="passwordRules"
-      :append-icon="hidePassword ? 'visibility' : 'visibility_off'"
-      :append-icon-cb="() => (hidePassword = !hidePassword)"
-      :type="hidePassword ? 'password' : 'text'"
-      ></v-text-field>
-    <v-text-field
-      required
-      v-model="confirmPassword"
-      v-on:input="samePasswords"
-      name="confirmPassword"
-      label="Confirm password"
-      :rules="confirmPasswordRules"
-      :append-icon="hidePassword ? 'visibility' : 'visibility_off'"
-      :append-icon-cb="() => (hidePassword = !hidePassword)"
-      :type="hidePassword ? 'password' : 'text'"
-      ></v-text-field>
-  </div>
-  <v-layout slot="actions">
-    <small>*indicates required field</small>
-    <v-spacer></v-spacer>
+<visitor-background>
+  <default-form
+    title="Reset your password"
+    :alert="alert"
+    :form="form"
+    ref="defaultForm">
+    <div slot="fields">
+      <v-text-field
+        required
+        v-model="userName"
+        name="userName"
+        label="Username"
+        :rules="[v => !!v || 'Username is required']"
+        type="text"
+        ></v-text-field>
+      <v-text-field
+        required
+        v-model="email"
+        name="email"
+        label="Email"
+        :rules="emailRules"
+        type="text"
+        ></v-text-field>
+      <v-text-field
+        required
+        v-model="firstName"
+        name="firstName"
+        label="First name"
+        :rules="[v => !!v || 'First name is required']"
+        type="text"
+        ></v-text-field>
+      <v-text-field
+        required
+        v-model="lastName"
+        name="lastName"
+        label="Last name"
+        :rules="[v => !!v || 'Last name is required']"
+        type="text"
+        ></v-text-field>
+      <v-text-field
+        required
+        v-model="password"
+        v-on:input="samePasswords"
+        name="password"
+        label="Password"
+        :rules="passwordRules"
+        :append-icon="hidePassword ? 'visibility' : 'visibility_off'"
+        :append-icon-cb="() => (hidePassword = !hidePassword)"
+        :type="hidePassword ? 'password' : 'text'"
+        ></v-text-field>
+      <v-text-field
+        required
+        v-model="confirmPassword"
+        v-on:input="samePasswords"
+        name="confirmPassword"
+        label="Confirm password"
+        :rules="confirmPasswordRules"
+        :append-icon="hidePassword ? 'visibility' : 'visibility_off'"
+        :append-icon-cb="() => (hidePassword = !hidePassword)"
+        :type="hidePassword ? 'password' : 'text'"
+        ></v-text-field>
+    </div>
+    <v-layout slot="actions">
+      <small>*indicates required field</small>
+      <v-spacer></v-spacer>
     <v-btn type="submit"
            color="primary">Register</v-btn>
   </v-layout>
-</visitor-form>
+</default-form>
+</visitor-background>
 </template>
 
 <script>
-import VisitorForm from '@/components/VisitorForm'
+import DefaultForm from '@/components/DefaultForm'
+import VisitorBackground from '@/components/VisitorBackground'
 import AuthenticationService from '@/services/AuthenticationService'
-import {validPassword, validEmail} from '@/util/validation'
+import {validPassword, nonEmptyPassword, validEmail} from '@/util/validation'
 
 export default {
   components: {
-    VisitorForm
+    DefaultForm,
+    VisitorBackground
   },
 
   data () {
@@ -87,7 +91,7 @@ export default {
       firstName: '',
       lastName: '',
       password: '',
-      passwordRules: [ validPassword ],
+      passwordRules: [ nonEmptyPassword, validPassword ],
       confirmPassword: '',
       confirmPasswordRules: [ ],
       hidePassword: true,
@@ -99,7 +103,7 @@ export default {
   methods: {
     async register () {
       this.samePasswords()
-      if (!this.$refs.visitorForm.$refs.form.validate()) return
+      if (!this.$refs.defaultForm.$refs.form.validate()) return
       try {
         const data = {
           userName: this.userName,

@@ -5,6 +5,9 @@ export function validEmail (value) {
 }
 
 export function validPassword (value) {
-  if (!value) return 'Password is required'
-  return value.length > 7 || 'Password must be 8 characters or more'
+  return (value.length < 1 || value.length > 7) || 'Password must be 8 characters or more'
+}
+
+export function nonEmptyPassword (value) {
+  return !!value || 'Password is required'
 }

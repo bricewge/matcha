@@ -1,40 +1,44 @@
 <template>
-<visitor-form
-  title="Forgot your password?"
-  :alert="alert"
-  :form="form"
-  ref="visitorForm">
-  <div slot="fields">
-    <v-text-field
-      name="email"
-      label="Email"
-      v-model="email"
-      :rules="emailRules"
-      ></v-text-field>
-  </div>
-  <v-layout slot="actions">
-    <router-link
-      to="/login"
-      class="ml-1 grey--text text--darken-1"
-      >Login</router-link>
-    <v-spacer></v-spacer>
-    <v-btn
-      type="submit"
-      color="primary"
-      :disabled="!buttonEnabled"
-      >Send me instructions</v-btn>
-  </v-layout>
-</visitor-form>
+<visitor-background>
+  <default-form
+    title="Forgot your password?"
+    :alert="alert"
+    :form="form"
+    ref="defaultForm">
+    <div slot="fields">
+      <v-text-field
+        name="email"
+        label="Email"
+        v-model="email"
+        :rules="emailRules"
+        ></v-text-field>
+    </div>
+    <v-layout slot="actions">
+      <router-link
+        to="/login"
+        class="ml-1 grey--text text--darken-1"
+        >Login</router-link>
+      <v-spacer></v-spacer>
+      <v-btn
+        type="submit"
+        color="primary"
+        :disabled="!buttonEnabled"
+        >Send me instructions</v-btn>
+    </v-layout>
+</default-form>
+</visitor-background>
 </template>
 
 <script>
-import VisitorForm from '@/components/VisitorForm'
+import DefaultForm from '@/components/DefaultForm'
+import VisitorBackground from '@/components/VisitorBackground'
 import AuthenticationService from '@/services/AuthenticationService'
 import {validEmail} from '@/util/validation'
 
 export default {
   components: {
-    VisitorForm
+    DefaultForm,
+    VisitorBackground
   },
 
   data () {
@@ -49,7 +53,7 @@ export default {
 
   methods: {
     async forgot () {
-      if (!this.$refs.visitorForm.$refs.form.validate()) return
+      if (!this.$refs.defaultForm.$refs.form.validate()) return
       try {
         const response = await AuthenticationService.forgot({
           email: this.email

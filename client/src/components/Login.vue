@@ -1,51 +1,55 @@
 <template>
-<visitor-form
-  title="Login"
-  :alert="alert"
-  :form="form"
-  ref="visitorForm">
-  <div slot="fields">
-    <v-text-field prepend-icon="person"
-                  name="userName"
-                  label="Username"
-                  type="text"
-                  v-model="userName"
-                  :rules="[v => !!v || 'Username is required']"
-                  ></v-text-field>
-    <v-text-field prepend-icon="lock"
-                  name="password"
-                  label="Password"
-                  id="password"
-                  type="password"
-                  v-model="password"
-                  :rules="passwordRules"
-                  ></v-text-field>
-  </div>
-  <v-layout slot="actions">
-    <router-link to="/forgot" class="ml-1 grey--text text--darken-1">
-      Forgot password?</router-link>
-    <v-spacer></v-spacer>
-    <v-btn type="submit"
-           color="primary">Login</v-btn>
+<visitor-background>
+  <default-form
+    title="Login"
+    :alert="alert"
+    :form="form"
+    ref="defaultForm">
+    <div slot="fields">
+      <v-text-field prepend-icon="person"
+                    name="userName"
+                    label="Username"
+                    type="text"
+                    v-model="userName"
+                    :rules="[v => !!v || 'Username is required']"
+                    ></v-text-field>
+      <v-text-field prepend-icon="lock"
+                    name="password"
+                    label="Password"
+                    id="password"
+                    type="password"
+                    v-model="password"
+                    :rules="passwordRules"
+                    ></v-text-field>
+    </div>
+    <v-layout slot="actions">
+      <router-link to="/forgot" class="ml-1 grey--text text--darken-1">
+        Forgot password?</router-link>
+      <v-spacer></v-spacer>
+      <v-btn type="submit"
+             color="primary">Login</v-btn>
   </v-layout>
-</visitor-form>
+  </default-form>
+</visitor-background>
 </template>
 
 <script>
-import VisitorForm from '@/components/VisitorForm'
+import DefaultForm from '@/components/DefaultForm'
+import VisitorBackground from '@/components/VisitorBackground'
 import AuthenticationService from '@/services/AuthenticationService'
-import {validPassword} from '@/util/validation'
+import {validPassword, nonEmptyPassword} from '@/util/validation'
 
 export default {
   components: {
-    VisitorForm
+    DefaultForm,
+    VisitorBackground
   },
 
   data () {
     return {
       userName: '',
       password: '',
-      passwordRules: [validPassword],
+      passwordRules: [nonEmptyPassword, validPassword],
       alert: { type: 'error', visible: false, message: '' },
       form: { calid: 'false', submit: this.login }
     }
@@ -53,7 +57,7 @@ export default {
 
   methods: {
     async login () {
-      if (!this.$refs.visitorForm.$refs.form.validate()) return
+      if (!this.$refs.defaultForm.$refs.form.validate()) return
       try {
         const response = await this.$auth.login({
           data: {

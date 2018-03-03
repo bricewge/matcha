@@ -1,57 +1,61 @@
 <template>
-<visitor-form
-  title="Reset your password"
-  :alert="alert"
-  :form="form"
-  ref="visitorForm">
-  <div slot="fields">
-    <v-text-field
-      required
-      v-model="password"
-      v-on:input="samePasswords"
-      name="password"
-      label="Password"
-      :rules="passwordRules"
-      :append-icon="hidePassword ? 'visibility' : 'visibility_off'"
-      :append-icon-cb="() => (hidePassword = !hidePassword)"
-      :type="hidePassword ? 'password' : 'text'"
-      ></v-text-field>
-    <v-text-field
-      required
-      v-model="confirmPassword"
-      v-on:input="samePasswords"
-      name="confirmPassword"
-      label="Confirm password"
-      :rules="confirmPasswordRules"
-      :append-icon="hidePassword ? 'visibility' : 'visibility_off'"
-      :append-icon-cb="() => (hidePassword = !hidePassword)"
-      :type="hidePassword ? 'password' : 'text'"
-      ></v-text-field>
-  </div>
-  <v-layout slot="actions">
-    <v-spacer></v-spacer>
-    <v-btn
-      type="submit"
-      color="primary"
-      >Reset</v-btn>
+<visitor-background>
+  <default-form
+    title="Reset your password"
+    :alert="alert"
+    :form="form"
+    ref="defaultForm">
+    <div slot="fields">
+      <v-text-field
+        required
+        v-model="password"
+        v-on:input="samePasswords"
+        name="password"
+        label="Password"
+        :rules="passwordRules"
+        :append-icon="hidePassword ? 'visibility' : 'visibility_off'"
+        :append-icon-cb="() => (hidePassword = !hidePassword)"
+        :type="hidePassword ? 'password' : 'text'"
+        ></v-text-field>
+      <v-text-field
+        required
+        v-model="confirmPassword"
+        v-on:input="samePasswords"
+        name="confirmPassword"
+        label="Confirm password"
+        :rules="confirmPasswordRules"
+        :append-icon="hidePassword ? 'visibility' : 'visibility_off'"
+        :append-icon-cb="() => (hidePassword = !hidePassword)"
+        :type="hidePassword ? 'password' : 'text'"
+        ></v-text-field>
+    </div>
+    <v-layout slot="actions">
+      <v-spacer></v-spacer>
+      <v-btn
+        type="submit"
+        color="primary"
+        >Reset</v-btn>
   </v-layout>
-</visitor-form>
+</default-form>
+</visitor-background>
 </template>
 
 <script>
-import VisitorForm from '@/components/VisitorForm'
+import DefaultForm from '@/components/DefaultForm'
+import VisitorBackground from '@/components/VisitorBackground'
 import AuthenticationService from '@/services/AuthenticationService'
-import {validPassword} from '@/util/validation'
+import {validPassword, nonEmptyPassword} from '@/util/validation'
 
 export default {
   components: {
-    VisitorForm
+    DefaultForm,
+    VisitorBackground
   },
 
   data () {
     return {
       password: '',
-      passwordRules: [ validPassword ],
+      passwordRules: [ nonEmptyPassword, validPassword ],
       confirmPassword: '',
       confirmPasswordRules: [ ],
       hidePassword: true,
@@ -62,7 +66,7 @@ export default {
   methods: {
     async reset () {
       this.samePasswords()
-      if (!this.$refs.visitorForm.$refs.form.validate()) return
+      if (!this.$refs.defaultForm.$refs.form.validate()) return
       try {
         await AuthenticationService.reset({
           resetPasswordToken: this.$route.params.token,
