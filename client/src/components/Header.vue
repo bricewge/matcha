@@ -79,7 +79,7 @@ function capitalize (string) {
 export default {
   data () {
     return {
-      menu: null,
+      menu: false,
       items: [
         // { title: 'My profile', icon: 'account_box', action: 'profile' },
         { title: 'Chat', icon: 'chat', action: 'chat' },
@@ -92,6 +92,7 @@ export default {
   methods: {
     itemAction: function (item) {
       if (item.action === 'logout') {
+        this.menu = false
         this.$auth.logout()
       } else {
         this.$router.push(item.action)
