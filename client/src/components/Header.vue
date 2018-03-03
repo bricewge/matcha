@@ -34,16 +34,19 @@
     <v-card>
       <router-link class="link-hidden" to="profile">
         <v-card-title class="grey lighten-3">
-          <v-avatar size="40px">
-            <img :src="user.profilePicture" alt="Profile picture">
-          </v-avatar>
-          <v-spacer />
-          <div>
-            <div class="subheading account-name">
-              {{ firstNameCapitalize }} {{ lastNameUpperCase }}
-            </div>
-            <span>{{ user.email }}</span>
-          </div>
+          <v-layout row align-center>
+            <v-flex class="pr-3">
+              <v-avatar size="40px">
+                <img :src="user.profilePicture" alt="Profile picture">
+              </v-avatar>
+            </v-flex>
+            <v-flex>
+              <div class="subheading account-name">
+                {{ userNameCapitalize }}
+              </div>
+              <span>{{ user.email }}</span>
+            </v-flex>
+          </v-layout>
         </v-card-title>
       </router-link>
       <v-list>
@@ -101,11 +104,8 @@ export default {
     userNameFirstLetter: function () {
       return this.user.userName[0].toUpperCase()
     },
-    firstNameCapitalize: function () {
-      return capitalize(this.user.firstName)
-    },
-    lastNameUpperCase: function () {
-      return this.user.lastName.toUpperCase()
+    userNameCapitalize: function () {
+      return capitalize(this.user.userName)
     }
   }
 }
