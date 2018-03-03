@@ -51,7 +51,7 @@ export default {
       password: '',
       passwordRules: [nonEmptyPassword, validPassword],
       alert: { type: 'error', visible: false, message: '' },
-      form: { calid: 'false', submit: this.login }
+      form: { valid: false, submit: this.login }
     }
   },
 

@@ -60,7 +60,7 @@ export default {
       confirmPasswordRules: [ ],
       hidePassword: true,
       alert: { type: 'error', visible: false, message: '' },
-      form: { calid: 'false', submit: this.reset }
+      form: { valid: false, submit: this.reset }
     }
   },
   methods: {

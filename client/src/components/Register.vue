@@ -96,7 +96,7 @@ export default {
       confirmPasswordRules: [ ],
       hidePassword: true,
       alert: { type: 'error', visible: false, message: '' },
-      form: { calid: 'false', submit: this.register }
+      form: { valid: false, submit: this.register }
     }
   },
 

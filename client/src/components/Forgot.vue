@@ -47,7 +47,7 @@ export default {
       emailRules: [validEmail],
       buttonEnabled: true,
       alert: { type: 'error', visible: false, message: '' },
-      form: { calid: 'false', submit: this.forgot }
+      form: { valid: false, submit: this.forgot }
     }
   },
 
