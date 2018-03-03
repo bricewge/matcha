@@ -5,7 +5,8 @@ import Register from '@/components/Register'
 import Login from '@/components/Login'
 import Forgot from '@/components/Forgot'
 import Reset from '@/components/Reset'
-import Settings from '@/components/Settings'
+import Account from '@/components/Account'
+import Index from '@/components/Index'
 
 Vue.use(Router)
 
@@ -16,7 +17,7 @@ export default new Router({
       // TODO Create the actual component
       path: '/',
       name: 'index',
-      component: Settings,
+      component: Index,
       meta: {
         auth: {
           roles: 'active',
@@ -67,7 +68,7 @@ export default new Router({
       path: '/account',
       name: 'account',
       meta: {auth: true},
-      component: Settings
+      component: Account
     }
   ]
 })
