@@ -101,15 +101,16 @@ export default {
       this.samePasswords()
       if (!this.$refs.visitorForm.$refs.form.validate()) return
       try {
-        const response = await AuthenticationService.register({
+        const data = {
           userName: this.userName,
           email: this.email,
           firstName: this.firstName,
           lastName: this.lastName,
           password: this.password
+        }
+        const response = await this.$auth.register({
+          data: data
         })
-        this.$store.dispatch('setToken', response.data.token)
-        this.$store.dispatch('setUser', response.data.user)
         this.alert.visible = false
       } catch (err) {
         this.alert.type = 'error'

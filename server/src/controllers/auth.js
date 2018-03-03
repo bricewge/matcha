@@ -26,17 +26,10 @@ const transporter = nodemailer.createTransport({
 
 // Maybe should be merged in loggedUserData
 function jwtSignUser (user) {
-  return jwt.sign(user,
+  const payload = pick(user, ['userName', 'activation'])
+  return jwt.sign(payload,
     config.authentication.jwtSecret,
     {expiresIn: '30d'})
-}
-
-function loggedUserData (user) {
-  user = pick(user, ['id', 'userName', 'email', 'firstName', 'lastName',
-    'activation', 'sex', 'sexualPreference', 'fame',
-    'birthday', 'geography', 'profilePicture', 'location'])
-  const jwtPayload = pick(user, ['id', 'activation'])
-  return {user, token: jwtSignUser(jwtPayload)}
 }
 
 module.exports = {
@@ -47,7 +40,9 @@ module.exports = {
       validate.email(input.email)
       validate.password(input)
       let result = await user.create(input)
-      res.json(loggedUserData(result))
+      const token = jwtSignUser(result)
+      res.setHeader('Authorization', token)
+      res.sendStatus(201)
     } catch (err) {
       next(err)
     }
@@ -61,11 +56,39 @@ module.exports = {
         throw err
       } else if (!await bcrypt.compare(req.body.password, result.password)) {
         throw err
-      } else {
-        res.json(loggedUserData(result))
       }
+      const token = jwtSignUser(result)
+      res.setHeader('Authorization', token)
+      res.sendStatus(201)
     } catch (err) {
       next(err)
+    }
+  },
+
+  async authenticated (req, res, next) {
+    try {
+      const authHeader = req.get('Authorization')
+      if (authHeader.indexOf('Bearer ') !== 0) throw new Error('not a bearer token')
+      const token = authHeader.substr(7)
+      const decoded = jwt.verify(token, config.authentication.jwtSecret)
+      req.user = decoded
+      next()
+    } catch (err) {
+      next(err)
+    }
+  },
+
+  async user (req, res, next) {
+    try {
+      let result = await user.getAllByUserName(req.user)
+      result = pick(result, ['userName', 'email',
+        'firstName', 'lastName', 'activation',
+        'sex', 'sexualPreference', 'fame',
+        'birthday', 'geography', 'profilePicture',
+        'location'])
+      res.json({data: result})
+    } catch (err) {
+      console.log(err)
     }
   },
 
@@ -81,7 +104,8 @@ module.exports = {
         to: result.email,
         subject: 'Matcha password reset',
         html: `<p>To reset your password follow this
-               <a href="${req.headers.origin}/reset/${token}">link</a>.                      </p>`
+               <a href="${req.headers.origin}/reset/${token}">link</a>.
+               </p>`
       })
       res.json({message: `An email has been send to ${result.email}`})
     } catch (err) {
@@ -100,7 +124,7 @@ module.exports = {
       result.resetPasswordToken = null
       validate.password(result)
       result = await user.update(result)
-      res.json(loggedUserData(result))
+      res.sendStatus(201)
     } catch (err) {
       next(err)
     }

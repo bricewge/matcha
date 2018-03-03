@@ -10,13 +10,16 @@ module.exports = (app) => {
     res.send('Welcome to Matcha API')
   })
 
-  app.post('/register',
+  app.post('/auth/register',
     auth.register)
-  app.post('/login',
+  app.post('/auth/login',
     auth.login)
-  app.post('/forgot',
+  app.get('/auth/user',
+    auth.authenticated,
+    auth.user)
+  app.post('/auth/forgot',
     auth.forgotPassword)
-  app.post('/reset',
+  app.post('/auth/reset',
     auth.resetPassword)
 
   app.put('/users',

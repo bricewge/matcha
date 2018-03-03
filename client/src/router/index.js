@@ -13,6 +13,19 @@ export default new Router({
   mode: 'history',
   routes: [
     {
+      // TODO Create the actual component
+      path: '/',
+      name: 'index',
+      component: Settings,
+      meta: {
+        auth: {
+          roles: 'active',
+          redirect: '/login',
+          forbiddenRedirect: '/account'
+        }
+      }
+    },
+    {
       path: '*',
       redirect: '/404'
     },
@@ -29,26 +42,31 @@ export default new Router({
     {
       path: '/register',
       name: 'register',
+      meta: {auth: false},
       component: Register
     },
     {
-      path: '/',
+      path: '/login',
       name: 'login',
+      meta: {auth: false},
       component: Login
     },
     {
       path: '/forgot',
       name: 'forgot',
+      meta: {auth: false},
       component: Forgot
     },
     {
       path: '/reset/:token',
       name: 'reset',
+      meta: {auth: false},
       component: Reset
     },
     {
-      path: '/settings',
-      name: 'settings',
+      path: '/account',
+      name: 'account',
+      meta: {auth: true},
       component: Settings
     }
   ]

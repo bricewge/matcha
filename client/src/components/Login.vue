@@ -55,12 +55,12 @@ export default {
     async login () {
       if (!this.$refs.visitorForm.$refs.form.validate()) return
       try {
-        const response = await AuthenticationService.login({
-          userName: this.userName,
-          password: this.password
+        const response = await this.$auth.login({
+          data: {
+            userName: this.userName,
+            password: this.password,
+          },
         })
-        this.$store.dispatch('setToken', response.data.token)
-        this.$store.dispatch('setUser', response.data.user)
         this.alert.visible = false
       } catch (err) {
         this.alert.type = 'error'

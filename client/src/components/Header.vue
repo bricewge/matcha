@@ -15,10 +15,10 @@
   </v-btn>
   <v-btn flat class="btn--plain"
          router to="register"
-         v-if="!$store.state.isUserLoggedIn"
+         v-if="!$auth.check()"
          >Sign In</v-btn>
   <v-menu
-    v-if="$store.state.isUserLoggedIn"
+    v-if="$auth.check()"
     :close-on-content-click="false"
     v-model="menu"
     offset-y
@@ -37,14 +37,14 @@
           <v-layout row align-center>
             <v-flex class="pr-3">
               <v-avatar size="40px">
-                <img :src="user.profilePicture" alt="Profile picture">
+                <img :src="$auth.user().profilePicture" alt="Profile picture">
               </v-avatar>
             </v-flex>
             <v-flex>
               <div class="subheading account-name">
                 {{ userNameCapitalize }}
               </div>
-              <span>{{ user.email }}</span>
+              <span>{{ $auth.user().email }}</span>
             </v-flex>
           </v-layout>
         </v-card-title>
@@ -83,7 +83,7 @@ export default {
       items: [
         // { title: 'My profile', icon: 'account_box', action: 'profile' },
         { title: 'Chat', icon: 'chat', action: 'chat' },
-        { title: 'Settings', icon: 'settings', action: 'settings' },
+        { title: 'Settings', icon: 'settings', action: 'account' },
         { title: 'Log out', icon: 'lock', action: 'logout' }
       ]
     }
@@ -92,7 +92,7 @@ export default {
   methods: {
     itemAction: function (item) {
       if (item.action === 'logout') {
-        console.log('Log me out!')
+        this.$auth.logout()
       } else {
         this.$router.push(item.action)
       }
@@ -102,10 +102,10 @@ export default {
   computed: {
     ...mapState(['user']),
     userNameFirstLetter: function () {
-      return this.user.userName[0].toUpperCase()
+      return this.$auth.user().userName[0].toUpperCase()
     },
     userNameCapitalize: function () {
-      return capitalize(this.user.userName)
+      return capitalize(this.$auth.user().userName)
     }
   }
 }

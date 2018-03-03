@@ -1,8 +1,19 @@
 <template>
 <v-app id="inspire">
   <page-header />
-  <v-content>
+  <v-content v-if="$auth.ready()">
     <router-view />
+  </v-content>
+  <v-content v-if="!$auth.ready()">
+    <v-container fluid fill-height class="grey lighten-1" >
+      <v-layout align-center justify-center>
+        <v-progress-circular
+          indeterminate
+          :size="50"
+          color="primary"
+          ></v-progress-circular>
+      </v-layout>
+    </v-container>
   </v-content>
   <page-footer />
 </v-app>
