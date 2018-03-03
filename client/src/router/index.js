@@ -1,5 +1,6 @@
 import Vue from 'vue'
 import Router from 'vue-router'
+import Errors from '@/components/Errors'
 import Register from '@/components/Register'
 import Login from '@/components/Login'
 import Forgot from '@/components/Forgot'
@@ -13,7 +14,17 @@ export default new Router({
   routes: [
     {
       path: '*',
-      redirect: '/'
+      redirect: '/404'
+    },
+    {
+      path: '/404',
+      name: '404',
+      component: Errors
+    },
+    {
+      path: '/403',
+      name: '403',
+      component: Errors
     },
     {
       path: '/register',
