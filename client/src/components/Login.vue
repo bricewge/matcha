@@ -57,8 +57,8 @@ export default {
 
   methods: {
     async login () {
-      if (!this.$refs.defaultForm.$refs.form.validate()) return
       try {
+        if (!this.$refs.defaultForm.$refs.form.validate()) return
         const response = await this.$auth.login({
           data: {
             userName: this.userName,

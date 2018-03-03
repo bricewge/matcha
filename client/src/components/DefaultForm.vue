@@ -15,7 +15,7 @@
         ref="alert"
         :type="alert.type"
         v-model="alert.visible"
-        dismissible
+        :dismissible="alert.dismissible"
         transition="scale-transition"
         >{{ alert.message }}</v-alert>
     </v-card-text>
@@ -45,7 +45,8 @@ export default {
       default: () => ({
         type: 'error',
         visible: false,
-        message: 'Error message'
+        message: 'Error message',
+        dismissible: true
       })
     }
   }
