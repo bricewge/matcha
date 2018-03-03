@@ -3,7 +3,7 @@
   <v-layout align-center justify-center>
     <v-flex xs12 sm8 md4>
       <v-card class="elevation-6">
-        <v-card-title class="grey lighten-4">
+        <v-card-title class="grey lighten-3">
           <v-toolbar-title class="text-xs-center">
             {{ title }}</v-toolbar-title>
         </v-card-title>

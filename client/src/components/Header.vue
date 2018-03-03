@@ -25,26 +25,32 @@
     bottom
     class="mr-3"
     >
-    <v-avatar color="primary"
-              :size=36
-              slot="activator">
+    <v-avatar
+      color="primary"
+      :size=36
+      slot="activator">
       <span class="white--text headline">{{ userNameFirstLetter }}</span>
     </v-avatar>
     <v-card>
-      <v-list >
-        <v-list-tile avatar>
-          <v-list-tile-avatar>
+      <router-link class="link-hidden" to="profile">
+        <v-card-title class="grey lighten-3">
+          <v-avatar size="40px">
             <img :src="user.profilePicture" alt="Profile picture">
-          </v-list-tile-avatar>
-          <v-list-tile-content>
-            <v-list-tile-title> {{ firstNameCapitalize }} {{ lastNameUpperCase }}</v-list-tile-title>
-            <v-list-tile-sub-title>{{ user.email }}</v-list-tile-sub-title>
-          </v-list-tile-content>
-        </v-list-tile>
-      </v-list>
-      <v-divider></v-divider>
+          </v-avatar>
+          <v-spacer />
+          <div>
+            <div class="subheading account-name">
+              {{ firstNameCapitalize }} {{ lastNameUpperCase }}
+            </div>
+            <span>{{ user.email }}</span>
+          </div>
+        </v-card-title>
+      </router-link>
       <v-list>
-        <v-list-tile v-for="item in items" :key="item.title" @click="">
+        <v-list-tile
+          v-for="item in items"
+          :key="item.title"
+          @click="itemAction(item)">
           <v-list-tile-action>
             <v-icon>{{ item.icon }}</v-icon>
           </v-list-tile-action>
@@ -72,11 +78,21 @@ export default {
     return {
       menu: null,
       items: [
-        { title: 'My profile', icon: 'account_box', action: 'profile' },
+        // { title: 'My profile', icon: 'account_box', action: 'profile' },
         { title: 'Chat', icon: 'chat', action: 'chat' },
         { title: 'Settings', icon: 'settings', action: 'settings' },
         { title: 'Log out', icon: 'lock', action: 'logout' }
       ]
+    }
+  },
+
+  methods: {
+    itemAction: function (item) {
+      if (item.action === 'logout') {
+        console.log('Log me out!')
+      } else {
+        this.$router.push(item.action)
+      }
     }
   },
 
@@ -96,4 +112,7 @@ export default {
 </script>
 
 <style scoped>
+.account-name {
+  font-weight: 500;
+}
 </style>

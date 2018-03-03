@@ -30,7 +30,7 @@ services:
     depends_on:
       - db
       - mail
-    command: sh -c '/opt/wait-for db:3306 -- npm start'
+    command: sh -c '/opt/wait-for --timeout=60 db:3306 -- npm start'
     volumes:
       - ./server:/opt/matcha-server:delegated
       - notused:/opt/matcha-server/node_modules

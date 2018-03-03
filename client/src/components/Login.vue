@@ -61,7 +61,7 @@ export default {
         })
         this.$store.dispatch('setToken', response.data.token)
         this.$store.dispatch('setUser', response.data.user)
-        this.error = false
+        this.alert.visible = false
       } catch (err) {
         this.alert.type = 'error'
         this.alert.message = err.response.data.message

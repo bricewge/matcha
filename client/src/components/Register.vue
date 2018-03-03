@@ -74,7 +74,6 @@ import VisitorForm from '@/components/VisitorForm'
 import AuthenticationService from '@/services/AuthenticationService'
 import {validPassword, validEmail} from '@/util/validation'
 
-
 export default {
   components: {
     VisitorForm
@@ -111,7 +110,7 @@ export default {
         })
         this.$store.dispatch('setToken', response.data.token)
         this.$store.dispatch('setUser', response.data.user)
-        this.alert.visible = true
+        this.alert.visible = false
       } catch (err) {
         this.alert.type = 'error'
         this.alert.message = err.response.data.message
@@ -123,7 +122,7 @@ export default {
     samePasswords () {
       if (!this.confirmPassword) {
         this.confirmPasswordRules = [v => !!v || 'Confirm password is required']
-      }else if (this.password !== this.confirmPassword) {
+      } else if (this.password !== this.confirmPassword) {
         this.confirmPasswordRules = [ v => 'Password aren\'t the same' ]
       } else {
         this.confirmPasswordRules = [ ]
