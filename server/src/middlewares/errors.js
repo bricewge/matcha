@@ -1,6 +1,6 @@
 const {inSingleQuotes} = require('../helpers/regex')
 const {capitalize} = require('../helpers/string')
-const {RequestValidationError, AppError} = require('../helpers/error')
+const {RequestValidationError} = require('../helpers/error')
 
 module.exports = (app) => {
   app.use(function notFound (req, res, next) {
