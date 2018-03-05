@@ -8,7 +8,13 @@
         :form="form"
         ref="defaultForm">
         <v-layout wrap row justify-space-between slot="fields">
-
+          <v-alert
+            type="warning"
+            value="!$auth.check('active')"
+            transition="scale-transition"
+            >
+            To activate your account this form must be completed in full.
+          </v-alert>
           <v-flex xs12>
             <v-text-field
               required
@@ -95,50 +101,29 @@
             </v-text-field>
           </v-flex>
 
-				<v-flex xs6 offset-xs3 class="text-xs-center">
-					<img
-            :src="imageProfile.url"
-            height="150"
-            v-if="imageProfile.url"/>
-					<v-text-field
-            label="Profile picture"
-            @click="pickFile"
-            v-model="imageProfile.name"
-            append-icon="portrait"
-            >
-					<input
-						type="file"
-						style="display: none"
-						ref="imageProfile"
-						accept="image/*"
-						@change="onFilePicked"
-					>
-          </v-text-field>
-				</v-flex>
 
-				<!-- <v-flex xs6 md3 class="text-xs-center"> -->
-				<!-- 	<img -->
-        <!--     :src="imageUrl" -->
-        <!--     height="150" -->
-        <!--     v-if="imageUrl"/> -->
-				<!-- 	<v-text-field -->
-        <!--     label="Picture (optional)" -->
-        <!--     @click="pickFile" -->
-        <!--     v-model="imageName" -->
-        <!--     ></v-text-field> -->
-				<!-- 	<input -->
-				<!-- 		type="file" -->
-				<!-- 		style="display: none" -->
-				<!-- 		ref="image" -->
-				<!-- 		accept="image/*" -->
-				<!-- 		@change="onFilePicked" -->
-				<!-- 	> -->
-				<!-- </v-flex> -->
+          <v-flex xs12>
+            <file-input
+              accept="image/*"
+              selectLabel="Profile picture"
+              @input="getUploadedFile($event, 'profile')"
+              ></file-input>
+          </v-flex>
+
+          <v-flex xs6 sm3
+            v-for="(val, key) in pictures"
+            :key="key">
+            <file-input
+              accept="image/*"
+              :selectLabel="'Picture ' + key"
+              @input="getUploadedFile($event, key)"
+              ></file-input>
+          </v-flex>
 
 
           <v-flex xs12>
-          <v-text-field
-            v-model="password"
+            <v-text-field
+              v-model="password"
             v-on:input="samePasswords"
             name="password"
             label="Password"
@@ -176,12 +161,14 @@
 import VuetifyGoogleAutocomplete from 'vuetify-google-autocomplete'
 import DefaultForm from '@/components/DefaultForm'
 import AuthenticationService from '@/services/AuthenticationService'
+import FileInput from '@/components/FileInput'
 import {validPassword, validEmail} from '@/util/validation'
 
 export default {
   components: {
     DefaultForm,
-    VuetifyGoogleAutocomplete
+    VuetifyGoogleAutocomplete,
+    FileInput
   },
 
   data () {
@@ -197,24 +184,15 @@ export default {
       sexualPreferences: ['Homo', 'Hetero', 'Bi'],
       age: null,
       location: {},
-      profilePicture: null,
+      profilePicture: '',
+      pictures: {1: '', 2: '', 3: '', 4: ''},
       biography: '',
-      imageProfile: {name: '', url: '', file: ''},
-		  images: [
-        {name: '', url: '', file: ''},
-        {name: '', url: '', file: ''},
-        {name: '', url: '', file: ''},
-        {name: '', url: '', file: ''}
-        ],
       password: '',
       passwordRules: [ validPassword ],
       confirmPassword: '',
       confirmPasswordRules: [ ],
       hidePassword: true,
-      alert: { type: 'warning',
-               visible: !this.$auth.check('active'),
-               message: 'To activate your account this form must be completed in full.',
-               dismissible: false },
+      alert: { type: 'error', visible: false, message: '' },
       form: { valid: false, submit: this.updateAccount }
     }
   },
@@ -224,10 +202,6 @@ export default {
       this.samePasswords()
       if (!this.$refs.defaultForm.$refs.form.validate()) return
       try {
-        // console.log(this.imageFile)
-        // let data2 = new FormData()
-        // data2.append(this.imageName, this.imageFile)
-        // console.log(data2)
         const config = {
           headers: { 'content-type': 'multipart/form-data' }
         }
@@ -236,7 +210,6 @@ export default {
           email: this.email || null,
           firstName: this.firstName || null,
           lastName: this.lastName || null,
-          image1: this.imageFile,
           password: this.password || null
         }
         const response = await this.axios.put(
@@ -246,6 +219,7 @@ export default {
       } catch (err) {
         this.alert.type = 'error'
         this.alert.message = err.response.data.message
+        this.alert.dismissible = true
         this.alert.visible = true
       }
     },
@@ -265,33 +239,11 @@ export default {
       this.location = addressData;
     },
 
-    pickFile (e) {
-      console.log(e)
-      this.$refs.image.click ()
+    getUploadedFile(e ,id) {
+      console.log(e, id, this, event)
+      // this.image = e
     },
-
-		onFilePicked (e) {
-      console.log(e)
-			const files = e.target.files
-			if(files[0] !== undefined) {
-				this.imageName = files[0].name
-				if(this.imageName.lastIndexOf('.') <= 0) {
-					return
-				}
-				const fr = new FileReader ()
-				fr.readAsDataURL(files[0])
-				fr.addEventListener('load', () => {
-					this.imageUrl = fr.result
-					this.imageFile = files[0] // this is an image file that can be sent to server...
-				})
-			} else {
-				this.imageName = ''
-				this.imageFile = ''
-				this.imageUrl = ''
-			}
-		}
-  },
-
+  }
 }
 </script>
 
