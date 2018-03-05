@@ -4,7 +4,6 @@ import Vue from 'vue'
 import axios from 'axios'
 import VueAxios from 'vue-axios'
 import Vuetify from 'vuetify'
-import VuetifyGoogleAutocomplete from 'vuetify-google-autocomplete'
 import { sync } from 'vuex-router-sync'
 import App from './App'
 import router from './router'
@@ -14,8 +13,6 @@ import store from '@/store/index'
 Vue.config.productionTip = true
 
 Vue.use(Vuetify)
-Vue.use(VuetifyGoogleAutocomplete,
-  {apiKey: 'AIzaSyBwjnihMdtnjciqGob6T9bFP0mVkePJW5U'})
 
 Vue.use(VueAxios, axios)
 Vue.axios.defaults.baseURL = '/api'
