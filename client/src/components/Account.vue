@@ -87,6 +87,17 @@
           </v-flex>
 
           <v-flex xs12>
+            <v-select
+              v-model="formData.interests"
+              label="Interests"
+              append-icon
+              chips
+              deletable-chips
+              tags
+              ></v-select>
+          </v-flex>
+
+          <v-flex xs12>
             <v-text-field
               v-model="formData.biography"
               multi-line
@@ -97,49 +108,47 @@
             </v-text-field>
           </v-flex>
 
-
           <v-flex xs12>
             <file-input
-              accept="image/*"
+              :accept="acceptImages"
               selectLabel="Profile picture"
               @input="getUploadedFile($event, 'profile')"
               ></file-input>
           </v-flex>
 
           <v-flex xs6 sm3
-            v-for="(val, key) in pictures"
-            :key="key">
+                  v-for="(val, key) in pictures"
+                  :key="key">
             <file-input
-              accept="image/*"
+              :accept="acceptImages"
               :selectLabel="'Picture ' + key"
               @input="getUploadedFile($event, key)"
               ></file-input>
           </v-flex>
 
-
           <v-flex xs12>
             <v-text-field
               v-model="formData.password"
-            v-on:input="samePasswords"
-            name="password"
-            label="Password"
-            :rules="passwordRules"
-            :append-icon="hidePassword ? 'visibility' : 'visibility_off'"
-            :append-icon-cb="() => (hidePassword = !hidePassword)"
-            :type="hidePassword ? 'password' : 'text'"
-            ></v-text-field>
+              v-on:input="samePasswords"
+              name="password"
+              label="Password"
+              :rules="passwordRules"
+              :append-icon="hidePassword ? 'visibility' : 'visibility_off'"
+              :append-icon-cb="() => (hidePassword = !hidePassword)"
+              :type="hidePassword ? 'password' : 'text'"
+              ></v-text-field>
           </v-flex>
           <v-flex xs12>
-          <v-text-field
-            v-model="formData.confirmPassword"
-            v-on:input="samePasswords"
-            name="confirmPassword"
-            label="Confirm password"
-            :rules="confirmPasswordRules"
-            :append-icon="hidePassword ? 'visibility' : 'visibility_off'"
-            :append-icon-cb="() => (hidePassword = !hidePassword)"
-            :type="hidePassword ? 'password' : 'text'"
-            ></v-text-field>
+            <v-text-field
+              v-model="formData.confirmPassword"
+              v-on:input="samePasswords"
+              name="confirmPassword"
+              label="Confirm password"
+              :rules="confirmPasswordRules"
+              :append-icon="hidePassword ? 'visibility' : 'visibility_off'"
+              :append-icon-cb="() => (hidePassword = !hidePassword)"
+              :type="hidePassword ? 'password' : 'text'"
+              ></v-text-field>
           </v-flex>
         </v-layout>
         <v-layout slot="actions">
@@ -178,10 +187,12 @@ export default {
         sexualPreference: this.$auth.user().sexualPreference || null,
         age: this.$auth.user().age || null,
         location: this.$auth.user().location || null,
+        interests: [],
         biography: this.$auth.user().biography || null,
         password: '',
         confirmPassword: '',
       },
+      acceptImages: 'image/jpeg, image/png',
       profilePicture: this.$auth.user().profilePicture || null,
       pictures: {1: this.$auth.user().picture1 || null,
                  2: this.$auth.user().picture2 || null,
@@ -207,7 +218,7 @@ export default {
         data.append('profilePicture', this.profilePicture)
         for (let key in this.pictures) {
           if (this.pictures[key]) {
-            data.append('picture' + key, this.pictures[key])
+            data.append('picture', this.pictures[key])
           }
         }
         for (let key in this.formData) {
