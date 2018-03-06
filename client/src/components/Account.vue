@@ -17,8 +17,7 @@
           </v-alert>
           <v-flex xs12>
             <v-text-field
-              required
-              v-model="userName"
+              v-model="formData.userName"
               name="userName"
               label="Username"
               :rules="[v => !!v || 'Username is required']"
@@ -27,8 +26,7 @@
           </v-flex>
           <v-flex xs12>
             <v-text-field
-              required
-              v-model="email"
+              v-model="formData.email"
               name="email"
               label="Email"
               :rules="emailRules"
@@ -38,8 +36,7 @@
 
           <v-flex xs12 sm6>
             <v-text-field
-              required
-              v-model="firstName"
+              v-model="formData.firstName"
               name="firstName"
               label="First name"
               :rules="[v => !!v || 'First name is required']"
@@ -48,8 +45,7 @@
           </v-flex>
           <v-flex xs12 sm6>
             <v-text-field
-              required
-              v-model="lastName"
+              v-model="formData.lastName"
               name="lastName"
               label="Last name"
               :rules="[v => !!v || 'Last name is required']"
@@ -58,15 +54,15 @@
           </v-flex>
           <v-flex xs12 sm6>
             <v-select
+              v-model="formData.sex"
               label="Sex"
-              v-model="sex"
               :items="sexs"
               ></v-select>
           </v-flex>
           <v-flex xs12 sm6>
             <v-select
+              v-model="formData.sexualPreference"
               label="Sexual preference"
-              v-model="sexualPreference"
               :items="sexualPreferences"
               ></v-select>
           </v-flex>
@@ -81,19 +77,19 @@
           </v-flex>
           <v-flex xs12>
             <v-slider
+              v-model="formData.age"
               label="Age"
               hint="Be honest"
               min="17"
               max="77"
               thumb-label
-              v-model="age"
               ></v-slider>
           </v-flex>
 
           <v-flex xs12>
             <v-text-field
+              v-model="formData.biography"
               multi-line
-              v-model="biography"
               >
               <div slot="label">
                 Biography
@@ -123,7 +119,7 @@
 
           <v-flex xs12>
             <v-text-field
-              v-model="password"
+              v-model="formData.password"
             v-on:input="samePasswords"
             name="password"
             label="Password"
@@ -135,7 +131,7 @@
           </v-flex>
           <v-flex xs12>
           <v-text-field
-            v-model="confirmPassword"
+            v-model="formData.confirmPassword"
             v-on:input="samePasswords"
             name="confirmPassword"
             label="Confirm password"
@@ -173,26 +169,31 @@ export default {
 
   data () {
     return {
-      userName: this.$auth.user().userName,
-      email: this.$auth.user().email,
+      formData: {
+        userName: this.$auth.user().userName,
+        email: this.$auth.user().email,
+        firstName: this.$auth.user().firstName,
+        lastName: this.$auth.user().lastName,
+        sex: this.$auth.user().sex || null,
+        sexualPreference: this.$auth.user().sexualPreference || null,
+        age: this.$auth.user().age || null,
+        location: this.$auth.user().location || null,
+        biography: this.$auth.user().biography || null,
+        password: '',
+        confirmPassword: '',
+      },
+      profilePicture: this.$auth.user().profilePicture || null,
+      pictures: {1: this.$auth.user().picture1 || null,
+                 2: this.$auth.user().picture2 || null,
+                 3: this.$auth.user().picture3 || null,
+                 4: this.$auth.user().picture4 || null},
       emailRules: [ validEmail ],
-      firstName: this.$auth.user().firstName,
-      lastName: this.$auth.user().lastName,
-      sex: this.$auth.user().sex,
-      sexs: ['Male', 'Female'],
-      sexualPreference: this.$auth.user().sex,
-      sexualPreferences: ['Homo', 'Hetero', 'Bi'],
-      age: null,
-      location: {},
-      profilePicture: '',
-      pictures: {1: '', 2: '', 3: '', 4: ''},
-      biography: '',
-      password: '',
       passwordRules: [ validPassword ],
-      confirmPassword: '',
       confirmPasswordRules: [ ],
+      sexs: ['Male', 'Female'],
+      sexualPreferences: ['Homo', 'Hetero', 'Bi'],
       hidePassword: true,
-      alert: { type: 'error', visible: false, message: '' },
+      alert: { type: 'error', visible: false, message: '', dismissible: true },
       form: { valid: false, submit: this.updateAccount }
     }
   },
@@ -202,24 +203,27 @@ export default {
       this.samePasswords()
       if (!this.$refs.defaultForm.$refs.form.validate()) return
       try {
+        let data = new FormData()
+        data.append('profilePicture', this.profilePicture)
+        for (let key in this.pictures) {
+          if (this.pictures[key]) {
+            data.append('picture' + key, this.pictures[key])
+          }
+        }
+        for (let key in this.formData) {
+          data.append(key, this.formData[key])
+        }
         const config = {
           headers: { 'content-type': 'multipart/form-data' }
-        }
-        const data = {
-          userName: this.userName || null,
-          email: this.email || null,
-          firstName: this.firstName || null,
-          lastName: this.lastName || null,
-          password: this.password || null
         }
         const response = await this.axios.put(
           'account', data, config)
         await this.$auth.fetch()
         this.alert.visible = false
       } catch (err) {
+        console.log(err)
         this.alert.type = 'error'
         this.alert.message = err.response.data.message
-        this.alert.dismissible = true
         this.alert.visible = true
       }
     },
@@ -240,8 +244,11 @@ export default {
     },
 
     getUploadedFile(e ,id) {
-      console.log(e, id, this, event)
-      // this.image = e
+      if (id === 'profile') {
+        this.profilePicture = e
+      } else if (id >= 1 && id <= 5) {
+        this.pictures[id] = e
+      }
     },
   }
 }
