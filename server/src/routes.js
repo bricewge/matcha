@@ -1,4 +1,5 @@
 const auth = require('./controllers/auth')
+const account = require('./controllers/account')
 const users = require('./controllers/users')
 const upload = require('./controllers/upload')
 
@@ -19,9 +20,16 @@ module.exports = (app) => {
   app.post('/auth/reset',
     auth.resetPassword)
 
-  // app.put('/users',
-  //   uploading.array('pictures', 5),
-  //   users.update)
+  app.put('/account',
+    auth.authenticated,
+    upload.fields([
+      {name: 'profilePicture', maxCount: 1},
+      {name: 'picture1', maxCount: 1},
+      {name: 'picture2', maxCount: 1},
+      {name: 'picture3', maxCount: 1},
+      {name: 'picture4', maxCount: 1}
+    ]),
+    account.update)
 
   app.get('/users',
     auth.authenticated,

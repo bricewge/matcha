@@ -39,6 +39,13 @@ exports.update = async function (input) {
   return exports.getAllById({'id': id})
 }
 
+exports.getIdByUserName = async function (input) {
+  validate.input(input, ['userName'])
+  const query = 'SELECT id FROM users WHERE userName = ?;'
+  const result = await db.get().queryAsync(query, input.userName)
+  return result[0].id
+}
+
 exports.getAllById = async function (input) {
   validate.input(input, ['id'])
   const query = 'SELECT * FROM users WHERE id = ?;'
@@ -77,6 +84,8 @@ exports.publicData = ['userName', 'firstName', 'lastName',
                       'sex', 'sexualPreference', 'birthday',
                       'biography', 'profilePicture', 'fame',
                       'age', 'location']
+
+exports.privateData = ['email', 'password']
 
 exports.createTable = function () {
   const table = `CREATE TABLE users (

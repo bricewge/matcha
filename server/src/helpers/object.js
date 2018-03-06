@@ -1,6 +1,6 @@
 exports.pick = function (obj, fields) {
   return fields.reduce((a, x) => {
-    if (obj.hasOwnProperty(x)) a[x] = obj[x]
+    if (obj[x]) a[x] = obj[x]
     return a
   }, {})
 }
