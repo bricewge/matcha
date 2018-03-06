@@ -73,6 +73,11 @@ exports.getAll = async function () {
   return db.get().queryAsync('SELECT * FROM users;')
 }
 
+exports.publicData = ['userName', 'firstName', 'lastName',
+                      'sex', 'sexualPreference', 'birthday',
+                      'biography', 'profilePicture', 'fame',
+                      'age', 'location']
+
 exports.createTable = function () {
   const table = `CREATE TABLE users (
                  id int(11) NOT NULL AUTO_INCREMENT,

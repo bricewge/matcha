@@ -22,7 +22,14 @@ module.exports = (app) => {
   app.post('/auth/reset',
     auth.resetPassword)
 
-  app.put('/users',
-    uploading.array('pictures', 5),
-    users.update)
+  // app.put('/users',
+  //   uploading.array('pictures', 5),
+  //   users.update)
+
+  app.get('/users',
+    auth.authenticated,
+    users.index)
+  app.get('/users/:userName',
+    auth.authenticated,
+    users.show)
 }
