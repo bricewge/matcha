@@ -88,8 +88,9 @@
 
           <v-flex xs12>
             <v-select
-              v-model="formData.interests"
+              v-model="interests"
               label="Interests"
+              multiple
               append-icon
               chips
               deletable-chips
@@ -187,11 +188,11 @@ export default {
         sexualPreference: this.$auth.user().sexualPreference || null,
         age: this.$auth.user().age || null,
         location: this.$auth.user().location || null,
-        interests: [],
         biography: this.$auth.user().biography || null,
         password: '',
         confirmPassword: '',
       },
+      interests: [],
       acceptImages: 'image/jpeg, image/png',
       profilePicture: this.$auth.user().profilePicture || null,
       pictures: {1: this.$auth.user().picture1 || null,
@@ -215,6 +216,7 @@ export default {
       if (!this.$refs.defaultForm.$refs.form.validate()) return
       try {
         let data = new FormData()
+        data.append('interests', JSON.stringify(this.interests))
         data.append('profilePicture', this.profilePicture)
         for (let key in this.pictures) {
           if (this.pictures[key]) {
