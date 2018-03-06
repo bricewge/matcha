@@ -29,14 +29,18 @@
       color="primary"
       :size=36
       slot="activator">
-      <span class="white--text headline">{{ userNameFirstLetter }}</span>
+      <span
+        v-if="!$auth.user().profilePicture"
+        class="white--text headline">
+        {{ userNameFirstLetter }}
+      </span>
     </v-avatar>
     <v-card>
       <router-link class="link-hidden" to="profile">
         <v-card-title class="grey lighten-3">
           <v-layout row align-center>
             <v-flex class="pr-3">
-              <v-avatar size="40px">
+              <v-avatar v-if="$auth.user().profilePicture" size="40px">
                 <img :src="$auth.user().profilePicture" alt="Profile picture">
               </v-avatar>
             </v-flex>
