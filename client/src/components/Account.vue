@@ -170,6 +170,12 @@ import AuthenticationService from '@/services/AuthenticationService'
 import FileInput from '@/components/FileInput'
 import {validPassword, validEmail} from '@/util/validation'
 
+function formAppend (form, name, data) {
+  if (data) {
+    form.append(name, data)
+  }
+}
+
 export default {
   components: {
     DefaultForm,
@@ -216,21 +222,18 @@ export default {
       if (!this.$refs.defaultForm.$refs.form.validate()) return
       try {
         let data = new FormData()
-        data.append('interests', JSON.stringify(this.interests))
-        data.append('profilePicture', this.profilePicture)
+        formAppend(data, 'profilePicture', this.profilePicture)
         for (let key in this.pictures) {
-          if (this.pictures[key]) {
-            data.append('picture', this.pictures[key])
-          }
+          formAppend(data, 'picture' + key, this.pictures[key])
+        }
+        if (this.interests && this.interests.length) {
+          data.append('interests', JSON.stringify(this.interests))
         }
         for (let key in this.formData) {
-          data.append(key, this.formData[key])
+          formAppend(data, key, this.formData[key])
         }
-        const config = {
-          headers: { 'content-type': 'multipart/form-data' }
-        }
-        const response = await this.axios.put(
-          'account', data, config)
+        const config = {headers: {'content-type': 'multipart/form-data'}}
+        const response = await this.axios.put('account', data, config)
         await this.$auth.fetch()
         this.alert.visible = false
       } catch (err) {
@@ -264,6 +267,10 @@ export default {
       }
     },
   }
+  // TODO On mount get:
+  // user data,
+  // user's interests,
+  // user's images
 }
 </script>
 
