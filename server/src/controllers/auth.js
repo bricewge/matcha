@@ -68,7 +68,9 @@ module.exports = {
   async authenticated (req, res, next) {
     try {
       const authHeader = req.get('Authorization')
-      if (authHeader.indexOf('Bearer ') !== 0) throw new Error('not a bearer token')
+      if (!authHeader || authHeader.indexOf('Bearer ') !== 0) {
+        throw new AppError('Bearer token is missing', 400)
+      }
       const token = authHeader.substr(7)
       const decoded = jwt.verify(token, config.authentication.jwtSecret)
       req.user = decoded
