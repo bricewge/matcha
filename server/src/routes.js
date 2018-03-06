@@ -1,9 +1,6 @@
-const multer = require('multer')
-const config = require('./config')
 const auth = require('./controllers/auth')
 const users = require('./controllers/users')
-
-const uploading = multer(config.upload)
+const upload = require('./controllers/upload')
 
 module.exports = (app) => {
   app.get('/', (req, res) => {

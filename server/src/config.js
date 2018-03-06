@@ -19,6 +19,6 @@ module.exports = {
   },
   upload: {
     dest: 'public/uploads/',
-    limit: {fileSize: 5000000, files: 5}
+    limits: {fileSize: 5000000, files: 5}
   }
 }
