@@ -15,8 +15,12 @@
   </v-btn>
   <v-btn flat class="btn--plain"
          router to="register"
-         v-if="!$auth.check()"
+         v-if="!$auth.check() && $route.name !== 'register'"
          >Sign In</v-btn>
+  <v-btn flat class="btn--plain"
+         router to="login"
+         v-if="!$auth.check() && $route.name === 'register'"
+         >Login</v-btn>
   <v-menu
     v-if="$auth.check()"
     :close-on-content-click="false"
@@ -29,21 +33,19 @@
       color="primary"
       :size=36
       slot="activator">
-      <span
-        v-if="!$auth.user().profilePicture"
-        class="white--text headline">
-        {{ userNameFirstLetter }}
-      </span>
+      <v-icon
+        large
+        v-if="!$auth.user().picture0"
+        >account_circle</v-icon>
+      <img
+        v-if="$auth.user().picture0"
+        :src="$auth.user().picture0"
+        alt="Profile picture">
     </v-avatar>
     <v-card>
       <router-link class="link-hidden" to="profile">
         <v-card-title class="grey lighten-3">
           <v-layout row align-center>
-            <v-flex class="pr-3">
-              <v-avatar v-if="$auth.user().profilePicture" size="40px">
-                <img :src="$auth.user().profilePicture" alt="Profile picture">
-              </v-avatar>
-            </v-flex>
             <v-flex>
               <div class="subheading account-name">
                 {{ userNameCapitalize }}
@@ -106,9 +108,6 @@ export default {
 
   computed: {
     ...mapState(['user']),
-    userNameFirstLetter: function () {
-      return this.$auth.user().userName[0].toUpperCase()
-    },
     userNameCapitalize: function () {
       return capitalize(this.$auth.user().userName)
     }
