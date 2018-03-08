@@ -111,19 +111,23 @@
 
           <v-flex xs12>
             <file-input
+              :value="formData.picture0"
               :accept="acceptImages"
               selectLabel="Profile picture"
-              @input="getUploadedFile($event, 'profile')"
+              @remove="removeUploadedFile($event, 'picture0')"
+              @input="getUploadedFile($event, 'picture0')"
               ></file-input>
           </v-flex>
 
           <v-flex xs6 sm3
-                  v-for="(val, key) in pictures"
+                  v-for="(val, key) in optionalPictures"
                   :key="key">
             <file-input
+              :value="formData['picture' + key]"
               :accept="acceptImages"
               :selectLabel="'Picture ' + key"
-              @input="getUploadedFile($event, key)"
+              @input="getUploadedFile($event, 'picture' + key)"
+              @remove="removeUploadedFile($event, 'picture' + key)"
               ></file-input>
           </v-flex>
 
@@ -163,12 +167,14 @@
 </v-container>
 </template>
 
+<!-- TODO Fix address not displayed from the server, need update to googleautocomplete -->
 <script>
 import VuetifyGoogleAutocomplete from 'vuetify-google-autocomplete'
 import DefaultForm from '@/components/DefaultForm'
 import AuthenticationService from '@/services/AuthenticationService'
 import FileInput from '@/components/FileInput'
 import {validPassword, validEmail} from '@/util/validation'
+import axios from 'axios'
 
 function formAppend (form, name, data) {
   if (data) {
@@ -193,18 +199,20 @@ export default {
         sex: this.$auth.user().sex || null,
         sexualPreference: this.$auth.user().sexualPreference || null,
         age: this.$auth.user().age || null,
+        locationName: this.$auth.user().locationName || null,
         location: this.$auth.user().location || null,
+        picture0: this.$auth.user().picture0 || null,
+        picture1: this.$auth.user().picture1 || null,
+        picture2: this.$auth.user().picture2 || null,
+        picture3: this.$auth.user().picture3 || null,
+        picture4: this.$auth.user().picture4 || null,
         biography: this.$auth.user().biography || null,
         password: '',
         confirmPassword: '',
       },
-      interests: [],
+      interests: this.$auth.user().interests || [],
       acceptImages: 'image/jpeg, image/png',
-      profilePicture: this.$auth.user().profilePicture || null,
-      pictures: {1: this.$auth.user().picture1 || null,
-                 2: this.$auth.user().picture2 || null,
-                 3: this.$auth.user().picture3 || null,
-                 4: this.$auth.user().picture4 || null},
+      files: {},
       emailRules: [ validEmail ],
       passwordRules: [ validPassword ],
       confirmPasswordRules: [ ],
@@ -216,28 +224,60 @@ export default {
     }
   },
 
+  computed: {
+    optionalPictures() {
+      const pictures = {
+        1: this.formData.picture1,
+        2: this.formData.picture2,
+        3: this.formData.picture3,
+        4: this.formData.picture4
+      }
+      return pictures
+    }
+  },
+
   methods: {
     async updateAccount () {
       this.samePasswords()
       if (!this.$refs.defaultForm.$refs.form.validate()) return
+      // Locate the user even if she hasn't given her location
+      try {
+        if (!this.formData.location) {
+          const ip = await axios.get('/location', {baseURL: ''})
+          this.formData.location = {
+            latitude: ip.data.latitude,
+            longitude: ip.data.longitude
+          }
+        }
+      } catch (err) {console.log(err)}
       try {
         let data = new FormData()
-        formAppend(data, 'profilePicture', this.profilePicture)
-        for (let key in this.pictures) {
-          formAppend(data, 'picture' + key, this.pictures[key])
-        }
         if (this.interests && this.interests.length) {
           data.append('interests', JSON.stringify(this.interests))
         }
         for (let key in this.formData) {
+          if (key === 'location') {
+            data.append('location', JSON.stringify(
+              this.formData.location,
+             ['latitude', 'longitude']
+            ))
+          } else {
           formAppend(data, key, this.formData[key])
+          }
+        }
+        // Need to be done last since it may modifies data
+        for (let key in this.files) {
+          if (this.files[key] === 'remove') {
+            data.set(key, 'remove')
+          } else {
+            formAppend(data, key, this.files[key])
+          }
         }
         const config = {headers: {'content-type': 'multipart/form-data'}}
         const response = await this.axios.put('account', data, config)
         await this.$auth.fetch()
         this.alert.visible = false
       } catch (err) {
-        console.log(err)
         this.alert.type = 'error'
         this.alert.message = err.response.data.message
         this.alert.visible = true
@@ -256,21 +296,22 @@ export default {
     },
 
     getAddressData (addressData, placeResultData, id) {
-      this.location = addressData;
+      this.formData.locationName = placeResultData.formatted_address
+      this.formData.location = {
+        latitude: addressData.latitude,
+        longitude: addressData.longitude,
+      }
+    },
+
+    removeUploadedFile(e, id) {
+      this.files[id] = 'remove'
+      this.formData[id] = null
     },
 
     getUploadedFile(e ,id) {
-      if (id === 'profile') {
-        this.profilePicture = e
-      } else if (id >= 1 && id <= 5) {
-        this.pictures[id] = e
-      }
-    },
+      this.files[id] = e
+    }
   }
-  // TODO On mount get:
-  // user data,
-  // user's interests,
-  // user's images
 }
 </script>
 

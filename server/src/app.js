@@ -2,6 +2,7 @@ const express = require('express')
 const bodyParser = require('body-parser')
 const morgan = require('morgan')
 const helmet = require('helmet')
+const path = require('path')
 
 const db = require('./db')
 const config = require('./config')
@@ -11,6 +12,9 @@ async function main () {
   app.use(morgan('combined'))
   app.use(bodyParser.json())
   app.use(helmet()) // Add secure HTTP headers
+
+  const uploadPath = path.join(__dirname, '..', config.upload.dest)
+  app.use('/' + config.upload.dest, express.static(uploadPath))
 
   require('./routes')(app)
   require('./middlewares/errors')(app) // Errors handling

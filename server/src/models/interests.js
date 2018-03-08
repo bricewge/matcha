@@ -5,11 +5,13 @@ exports.updateAll = async function (input) {
   const columns = ['userId', 'interests']
   validate.input(input, columns)
   await exports.deleteByUserId(input)
-  input = input.interests.map(i => [input.userId, i])
-  console.log(input)
-  const query = 'INSERT INTO interests (userId, interest) VALUES ?;'
-  let result = await db.get().queryAsync(query, [input])
-  return exports.getAllById({id: result.insertId})
+  if (input.interests.length) {
+    input = input.interests.map(i => [input.userId, i])
+    const query = 'INSERT INTO interests (userId, interest) VALUES ?;'
+    await db.get().queryAsync(query, [input])
+    // let result = await db.get().queryAsync(query, [input])
+    // return exports.getAllById({id: result.insertId})
+  }
 }
 
 exports.create = async function (input) {
@@ -42,7 +44,11 @@ exports.getAllById = async function (input) {
 exports.getAllByUserId = async function (input) {
   validate.input(input, ['userId'])
   const query = 'SELECT * FROM interests WHERE userId = ?;'
-  const result = await db.get().queryAsync(query, input.userId)
+  const rows = await db.get().queryAsync(query, input.userId)
+  let result = []
+  for (let row in rows) {
+    result.push(rows[row].interest)
+  }
   return result
 }
 

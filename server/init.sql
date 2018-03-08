@@ -7,25 +7,23 @@ lastName varchar(255) NOT NULL,
 password varchar(255) NOT NULL,
 activation enum('register', 'active', 'fake') NOT NULL DEFAULT 'register',
 sex enum('Male', 'Female'),
-sexualPreference enum('Hetero', 'Homo', 'Bi'),
+sexualPreference enum('Hetero', 'Homo', 'Bi') DEFAULT 'bi',
 fame SMALLINT UNSIGNED NOT NULL DEFAULT 0,
 age TINYINT UNSIGNED,
 biography TEXT,
-profilePicture varchar(255),
+picture0 varchar(255),
+picture1 varchar(255),
+picture2 varchar(255),
+picture3 varchar(255),
+picture4 varchar(255),
+locationName varchar(255),
 location POINT,
 online tinyint(1) NOT NULL DEFAULT 0,
 socketid varchar(20),
 resetPasswordToken varchar(255),
 PRIMARY KEY (id),
 UNIQUE KEY userName (userName),
-UNIQUE KEY email (email),
-UNIQUE KEY profilePicture (profilePicture));
-
-CREATE TABLE pictures (
-id int(11) NOT NULL AUTO_INCREMENT,
-userId int(11) NOT NULL,
-path varchar(255) NOT NULL,
-PRIMARY KEY (id));
+UNIQUE KEY email (email));
 
 CREATE TABLE interests (
 id int(11) NOT NULL AUTO_INCREMENT,

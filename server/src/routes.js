@@ -23,7 +23,7 @@ module.exports = (app) => {
   app.put('/account',
     auth.authenticated,
     upload.fields([
-      {name: 'profilePicture', maxCount: 1},
+      {name: 'picture0', maxCount: 1},
       {name: 'picture1', maxCount: 1},
       {name: 'picture2', maxCount: 1},
       {name: 'picture3', maxCount: 1},

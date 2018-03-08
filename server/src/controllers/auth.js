@@ -5,6 +5,7 @@ const Promise = require('bluebird')
 const crypto = Promise.promisifyAll(require('crypto'))
 const {pick} = require('../helpers/object')
 const user = require('../models/users')
+const interest = require('../models/interests')
 const config = require('../config')
 const validate = require('../helpers/validate')
 const {AppError} = require('../helpers/error')
@@ -84,11 +85,10 @@ module.exports = {
   async user (req, res, next) {
     try {
       let result = await user.getAllByUserName(req.user)
-      result = pick(result, ['userName', 'email',
-        'firstName', 'lastName', 'activation',
-        'sex', 'sexualPreference', 'fame',
-        'birthday', 'geography', 'profilePicture',
-        'location'])
+      let filter = user.publicData
+      filter.push('email')
+      result = pick(result, filter)
+      result.interests = await interest.getAllByUserId({userId: req.user.id})
       res.json({data: result})
     } catch (err) {
       console.log(err)

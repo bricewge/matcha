@@ -22,6 +22,17 @@ module.exports = {
         pathRewrite: {
           '^/api': ''
         }
+      },
+      '/public': {
+        target: `http://${api.host}:${api.port}`,
+        changeOrigin: true
+      },
+      '/location': {
+        target: 'http://freegeoip.net/json/',
+        changeOrigin: true,
+        pathRewrite: {
+          '^/location': ''
+        }
       }
     },
 

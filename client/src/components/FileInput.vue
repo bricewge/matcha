@@ -95,6 +95,7 @@ export default {
 
     removeFile() {
       this.imageUrl = ''
+      this.$emit('remove')
     }
   }
 }

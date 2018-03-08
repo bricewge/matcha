@@ -3,7 +3,6 @@ const Promise = require('bluebird')
 const db = require('../db')
 const config = require('../config').db
 const user = require('../models/users')
-const picture = require('../models/pictures')
 const interest = require('../models/interests')
 const visit = require('../models/visits')
 const like = require('../models/likes')
@@ -83,17 +82,8 @@ async function dbUserCreate (db, config) {
   console.log(`DB user ${config.user} as been created`)
 }
 
-async function dbCreateTables () {
-  await user.createTable()
-  await picture.createTable()
-  await interest.createTable()
-  await visit.createTable()
-  await like.createTable()
-  await match.createTable()
-  await message.createTable()
-  await notification.createTable()
-  await fake.createTable()
-  await block.createTable()
-}
+// TODO Rewrite with sql schema import
+// async function dbCreateTables () {
+// }
 
 main()

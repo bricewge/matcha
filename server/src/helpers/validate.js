@@ -61,6 +61,12 @@ exports.enum = function (input, expected) {
   return true
 }
 
+exports.location = function (c) {
+  const err = new AppError('Invalid coordinates', 400)
+  if (c.latitude > 90 || c.latitude < -90) throw err
+  if (c.longitude > 180 || c.longitude < -180) throw err
+}
+
 // Should return false
 // var test01 = {
 //   userName: 'toto',
