@@ -10,7 +10,7 @@
         <v-layout wrap row justify-space-between slot="fields">
           <v-alert
             type="warning"
-            value="!$auth.check('active')"
+            :value="!$auth.check('active')"
             transition="scale-transition"
             >
             To activate your account this form must be completed in full.
