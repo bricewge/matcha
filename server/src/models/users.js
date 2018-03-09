@@ -96,7 +96,7 @@ exports.getAllByResetPasswordToken = async function (input) {
 // Not sure if it's consistent with the result
 // of the other functions of the model
 exports.getAll = async function () {
-  return db.get().queryAsync('SELECT * FROM users LIMIT 12;')
+  return db.get().queryAsync('SELECT * FROM users;')
 }
 
 exports.publicData = ['userName', 'firstName', 'lastName',

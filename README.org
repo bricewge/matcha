@@ -8,7 +8,7 @@ host the containers - we assume it's name is =matcha=.
 #+BEGIN_SRC sh
   docker-machine start matcha
   eval $(docker-machine env matcha)
-  docker-compose down ; docker-compose up
+  docker-compose down --volumes ; docker-compose up --build
   docker-compose run server npm run init
 #+END_SRC
 The app is now accesible at this ip =docker-machine ip matcha= on port =8080=.

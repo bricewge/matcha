@@ -8,7 +8,7 @@ module.exports = {
   async index (req, res, next) {
     try {
       const users = await user.getAll()
-      console.log(users[42])
+      // console.log(users[42])
       let results = []
       for (let i = 0; i < users.length; i++) {
         if (users[i].activation === 'active') {

@@ -1,126 +1,93 @@
 <template>
-<v-layout column>
-  <v-flex xs12 md10 offset-md1>
-    <v-card
-      flat
-      class="py-5"
+<v-container fluid grid-list-md>
+  <div class="text-xs-center py-2">
+    <v-btn color="primary" @click.native="toggleOrder">Toggle sort order</v-btn>
+    <v-select
+      v-model="sort"
+      @input="sortBy()"
+      :items="sorts"
+      overflow
+      label="Sort by"
+      ></v-select>
+    <v-text-field
+      label="Test search"
+      v-model="search"
+      ></v-text-field>
+  </div>
+  <v-data-iterator
+    content-tag="v-layout"
+    row
+    wrap
+    :items="users"
+    :rows-per-page-items="rowsPerPageItems"
+    :pagination.sync="pagination"
+    :search="search"
+    >
+    <v-flex
+      slot="item"
+      slot-scope="props"
+      xs12
+      sm6
+      md4
+      lg3
       >
-      <v-form
-        @submit.prevent="filter"
-        >
-        <v-layout wrap row>
-          <v-flex xs6>
-            <v-layout row wrap>
-              <v-flex xs12>
-                <p class="title text-xs-center">Age</p>
-              </v-flex>
-              <v-flex xs2 offset-xs2>
-                <v-text-field
-                  mask="##"
-                  label="Min"
-                  ref="ageMin">
-                </v-text-field>
-              </v-flex>
-              <v-flex xs2 offset-xs2>
-                <v-text-field
-                  mask="##"
-                  label="Max"
-                  ref="ageMax">
-                </v-text-field>
-              </v-flex>
-            </v-layout>
-          </v-flex>
-        <v-flex xs6>
-          Fame
-        </v-flex>
-        <v-flex xs5>
-          <vuetify-google-autocomplete
-            id="map"
-            append-icon="map"
-            label="Location"
-            types="geocode"
-            v-on:placechanged="getAddressData"
-            ></vuetify-google-autocomplete>
-        </v-flex>
-        <v-spacer/>
-        <v-flex xs5>
-          <v-select
-            v-model="interests"
-            label="Interests"
-            multiple
-            append-icon
-            chips
-            deletable-chips
-            tags
-            ></v-select>
-        </v-flex>
-        <v-flex xs6 offset-xs4>
+      <v-card>
+        <router-link
+          :to="'user/' + props.item.userName"
+          >
+          <v-card-media
+            :src="props.item.picture0"
+            height="200px"
+            >
+          </v-card-media>
+        </router-link>
+        <v-card-title>
+          <div>
+            <div class="headline" v-text="props.item.userName"/>
+            <span class="grey--text">
+              {{ sexIcon(props.item.sex) }} {{ props.item.firstName }} {{ props.item.lastName }}
+            </span>
+          </div>
+        </v-card-title>
+        <v-card-actions>
+          <span class="black--text">
+            <v-icon color="black">whatshot</v-icon>
+            {{ props.item.fame || 0}}
+          </span>
+          <v-spacer></v-spacer>
           <v-btn
-            depressed
-            type="submit"
-             color="primary">
-            Filter</v-btn>
-          <v-btn
-            depressed>
-            Reset</v-btn>
-      </v-flex>
-      </v-layout>
-    </v-form>
-          </v-card>
-    <v-card>
-      <v-container fluid grid-list-md>
-        <v-layout row wrap>
-          <v-flex xs6 md4
-                  v-for="(user, key) in users"
-                  :key="user.userName"
-                  >
-            <v-card>
-              <router-link
-                :to="'user/' + user.userName"
-                >
-              <v-card-media
-                :src="user.picture0"
-                height="200px"
-                >
-              </v-card-media>
-              </router-link>
-              <v-card-title primary-title>
-                <div>
-                  <div class="headline" v-text="user.userName"/>
-                  <span class="grey--text">
-                    {{ sexIcon(user.sex) }} {{ user.firstName }} {{ user.lastName }}
-                  </span>
-                </div>
-              </v-card-title>
-              <v-card-actions>
-                <span class="black--text">
-                  <v-icon color="black">whatshot</v-icon>
-                  {{ user.fame }}
-                </span>
-                <v-spacer></v-spacer>
-                <v-btn
-                  icon
-                  @click="like(user, key)"
-                  >
-                  <v-icon v-show="user.liked">
-                    favorite
-                  </v-icon>
-                  <v-icon v-show="!user.liked">
-                    favorite_border
-                  </v-icon>
-                </v-btn>
-              </v-card-actions>
-            </v-card>
-          </v-flex>
-        </v-layout>
-      </v-container>
-    </v-card>
-  </v-flex>
-</v-layout>
+            icon
+            @click="like(props.item, props.index)"
+            >
+            <v-icon v-show="props.item.liked">
+              favorite
+            </v-icon>
+            <v-icon v-show="!props.item.liked">
+              favorite_border
+            </v-icon>
+          </v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-flex>
+  </v-data-iterator>
+</v-container>
 </template>
 
+<!-- TODO Sort by location -->
+<!-- TODO Use separated selector to sort and reverse the sort -->
+<!-- TODO Filter by age, fame, localisation, tags -->
 <script>
 import VuetifyGoogleAutocomplete from 'vuetify-google-autocomplete'
+import geolib from 'geolib'
+
+function compare (a,b) {
+  if (a.fame < b.fame)
+    return -1;
+  if (a.fame > b.fame)
+    return 1;
+  return 0;
+}
+
 
 export default {
   components: {
@@ -130,14 +97,32 @@ export default {
   data () {
     return {
       users: [],
-      interests: []
+      interests: [],
+      rowsPerPageItems: [4, 6, 12],
+      pagination: {
+        sortBy: 'fame',
+        rowsPerPage: 6
+      },
+      sort: 'Fame',
+      sorts: [
+        { text: 'Age' },
+        { text: 'Fame' },
+        { text: 'Location' }
+      ],
+      search: '',
+      filterTest: () => {}
     }
   },
 
   async mounted () {
     const users = await this.axios.get('users')
     this.users = users.data
-    console.log(users)
+    // console.log(users)
+    const test = geolib.getDistance(
+      {latitude: 51.5103, longitude: 7.49347},
+      {latitude: "51° 31' N", longitude: "7° 28' E"}
+    )
+    console.log(test)
   },
 
   methods: {
@@ -145,13 +130,23 @@ export default {
       return sex === 'Male' ? '♂' : '♀'
     },
 
-    like: function (user, key) {
-      this.users[key].liked = !this.users[key].liked
+    like: function (user) {
+      const index = this.users.indexOf(user)
+      this.users[index].liked = !this.users[index].liked
     },
 
     getAddressData (addressData, placeResultData, id) {
       console.log(addressData)
-      }
+    },
+
+    toggleOrder () {
+      this.pagination.descending = !this.pagination.descending
+    },
+
+    sortBy (sorting) {
+      console.log(this.pagination)
+      this.pagination.sortBy = this.sort.text.toLowerCase()
+    }
   }
 }
 </script>
