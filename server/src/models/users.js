@@ -19,8 +19,15 @@ exports.create = async function (input) {
   const columns = ['userName', 'email', 'firstName', 'lastName', 'password']
   validate.input(input, columns)
   // validate.enum(input, enums)
-  const query = 'INSERT INTO users SET ?;'
-  input.password = await bcrypt.hash(input.password, SALT_ROUNDS)
+  let query = 'INSERT INTO users SET ?;'
+  if (input.hasOwnProperty('password')) {
+    input.password = await bcrypt.hash(input.password, SALT_ROUNDS)
+  }
+  if (input.hasOwnProperty('location')) {
+    validate.location(input.location)
+    input.location = mysql.raw(`POINT(${input.location.latitude}, ${input.location.longitude})`)
+  }
+  query = mysql.format(query, [input])
   let result = await db.get().queryAsync(query, input)
   return exports.getAllById({id: result.insertId})
 }

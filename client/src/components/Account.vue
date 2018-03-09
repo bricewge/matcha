@@ -182,34 +182,38 @@ function formAppend (form, name, data) {
   }
 }
 
-export default {
-  components: {
-    DefaultForm,
-    VuetifyGoogleAutocomplete,
+function initialFormData(view) {
+  return {
+    userName: view.$auth.user().userName,
+    email: view.$auth.user().email,
+    firstName: view.$auth.user().firstName,
+    lastName: view.$auth.user().lastName,
+    sex: view.$auth.user().sex || null,
+    sexualPreference: view.$auth.user().sexualPreference || null,
+    age: view.$auth.user().age || null,
+    locationName: view.$auth.user().locationName || null,
+    location: view.$auth.user().location || null,
+    picture0: view.$auth.user().picture0 || null,
+    picture1: view.$auth.user().picture1 || null,
+    picture2: view.$auth.user().picture2 || null,
+    picture3: view.$auth.user().picture3 || null,
+    picture4: view.$auth.user().picture4 || null,
+    biography: view.$auth.user().biography || null,
+    password: '',
+    confirmPassword: '',
+  }
+}
+
+  export default {
+    components: {
+      DefaultForm,
+      VuetifyGoogleAutocomplete,
     FileInput
   },
 
   data () {
     return {
-      formData: {
-        userName: this.$auth.user().userName,
-        email: this.$auth.user().email,
-        firstName: this.$auth.user().firstName,
-        lastName: this.$auth.user().lastName,
-        sex: this.$auth.user().sex || null,
-        sexualPreference: this.$auth.user().sexualPreference || null,
-        age: this.$auth.user().age || null,
-        locationName: this.$auth.user().locationName || null,
-        location: this.$auth.user().location || null,
-        picture0: this.$auth.user().picture0 || null,
-        picture1: this.$auth.user().picture1 || null,
-        picture2: this.$auth.user().picture2 || null,
-        picture3: this.$auth.user().picture3 || null,
-        picture4: this.$auth.user().picture4 || null,
-        biography: this.$auth.user().biography || null,
-        password: '',
-        confirmPassword: '',
-      },
+      formData: initialFormData(this),
       interests: this.$auth.user().interests || [],
       acceptImages: 'image/jpeg, image/png',
       files: {},
@@ -276,6 +280,7 @@ export default {
         const config = {headers: {'content-type': 'multipart/form-data'}}
         const response = await this.axios.put('account', data, config)
         await this.$auth.fetch()
+        this.formData = initialFormData(this)
         this.alert.visible = false
       } catch (err) {
         this.alert.type = 'error'
@@ -305,7 +310,7 @@ export default {
 
     removeUploadedFile(e, id) {
       this.files[id] = 'remove'
-      this.formData[id] = null
+      // this.formData[id] = null
     },
 
     getUploadedFile(e ,id) {

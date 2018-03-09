@@ -2,25 +2,16 @@ const mysql = require('mysql')
 const Promise = require('bluebird')
 const db = require('../db')
 const config = require('../config').db
-const user = require('../models/users')
-const interest = require('../models/interests')
-const visit = require('../models/visits')
-const like = require('../models/likes')
-const match = require('../models/matchs')
-const message = require('../models/messages')
-const notification = require('../models/notifications')
-const fake = require('../models/fakes')
-const block = require('../models/blocks')
 
 async function main () {
-  if (!await dbReset()) process.exit(1)
+  // if (!await dbReset()) process.exit(1)
 
   try {
     db.connect()
     if (!db.get()) {
       console.log('Unable to connect to MySQL.')
     }
-    await dbCreateTables()
+    // await dbCreateTables()
   } catch (err) {
     console.error(err)
   }

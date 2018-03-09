@@ -3,6 +3,17 @@ const db = require('../db')
 const user = require('../models/users')
 
 const SEED_SIZE = 500
+const SEXS = ['Male', 'Female']
+const SEXUAL_PREFRENCES = ['Hetero', 'Homo', 'Bi']
+
+function randItem (array) {
+  return array[Math.floor(Math.random() * array.length)]
+}
+
+// Min inclusive, max exclusive
+function getRandomInt (min, max) {
+  return Math.floor(Math.random() * (max - min + 1)) + min
+}
 
 function fakeUser () {
   var user = {}
@@ -11,6 +22,21 @@ function fakeUser () {
   user.firstName = faker.name.firstName()
   user.lastName = faker.name.lastName()
   user.password = faker.internet.password()
+  user.activation = 'active'
+  user.sex = randItem(SEXS)
+  user.sexualPreference = randItem(SEXUAL_PREFRENCES)
+  user.age = getRandomInt(18, 78)
+  user.biography = faker.lorem.paragraph()
+  user.picture0 = faker.image.avatar()
+  user.picture1 = faker.image.imageUrl(400, 400, 'people')
+  user.picture2 = faker.image.imageUrl(400, 400, 'people')
+  user.picture3 = faker.image.imageUrl(400, 400, 'people')
+  user.picture4 = faker.image.imageUrl(400, 400, 'people')
+  user.locationName = faker.image.city()
+  user.location = {
+    latitude: faker.address.latitude(),
+    longitude: faker.address.longitude()
+  }
   return user
 }
 
