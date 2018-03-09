@@ -8,11 +8,15 @@ module.exports = {
   async index (req, res, next) {
     try {
       const users = await user.getAll()
+      console.log(users[42])
       let results = []
       for (let i = 0; i < users.length; i++) {
-        // TODO Reverse test when account can be activated
-        if (users[i].activation !== 'active') {
-          results.push(pick(users[i], user.publicData))
+        if (users[i].activation === 'active') {
+          let userData = pick(users[i], user.publicData)
+          delete userData.activation
+          // TODO Find if user is liked or blocked
+          userData.liked = false
+          results.push(userData)
         }
       }
       res.json(results)

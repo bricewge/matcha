@@ -1,9 +1,10 @@
 const fs = require('fs')
+const url = require('url')
+const path = require('path')
 const user = require('../models/users')
 const interest = require('../models/interests')
 const validate = require('../helpers/validate')
 const {pick} = require('../helpers/object')
-
 
 async function activateUser (input) {
   const data = await user.getAllById(input)
@@ -35,13 +36,24 @@ module.exports = {
       userData.location = JSON.parse(userData.location)
       // Add file
       for (let file in req.files) {
+        console.log(userData.picture0)
+        // const picturelUrl = url.parse(userData[key])
+        // let picturePath = path.parse(picturelUrl.path)
+        // picturePath.abs = process.cwd() + picturePath.dir + picturePath.base
+        // console.log(picturePath)
+        // if (picturePath.dir === '/public/uploads' &&
+        //     fs.existsSync(picturePath.abs)) {
+        //   fs.unlinkSync(picturePath.abs)
+        // }
         const url = `${req.headers.origin}/${req.files[file][0].path}`
         userData[file] = url
       }
       // Remove File
       for (let i = 0; i < 5; i++) {
         let key = 'picture' + i
-        if (userData[key] === 'remove') userData[key] = null
+        if (userData[key] === 'remove') {
+          userData[key] = null
+        }
       }
       await user.update(userData)
       // TODO Activate account if engnouth data in DB

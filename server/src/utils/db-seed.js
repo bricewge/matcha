@@ -37,6 +37,7 @@ function fakeUser () {
     latitude: faker.address.latitude(),
     longitude: faker.address.longitude()
   }
+  user.fame = getRandomInt(42, 420)
   return user
 }
 
