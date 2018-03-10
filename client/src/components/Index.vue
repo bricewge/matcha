@@ -1,12 +1,14 @@
 <template>
 <v-container fluid grid-list-md>
   <div class="text-xs-center py-2">
-    <v-btn color="primary" @click.native="toggleOrder">Toggle sort order</v-btn>
     <v-select
       v-model="sort"
-      @input="sortBy()"
+      @input="sortBy"
       :items="sorts"
-      overflow
+      item-value="text"
+      return-object
+      :prepend-icon="sortIcon"
+      :prepend-icon-cb="toggleOrder"
       label="Sort by"
       ></v-select>
     <v-text-field
@@ -26,10 +28,7 @@
     <v-flex
       slot="item"
       slot-scope="props"
-      xs12
-      sm6
-      md4
-      lg3
+      xs12 sm6 md4 lg3
       >
       <v-card>
         <router-link
@@ -59,7 +58,7 @@
             icon
             @click="like(props.item, props.index)"
             >
-            <v-icon v-show="props.item.liked">
+            <v-icon color="red" v-show="props.item.liked">
               favorite
             </v-icon>
             <v-icon v-show="!props.item.liked">
@@ -101,14 +100,16 @@ export default {
       rowsPerPageItems: [4, 6, 12],
       pagination: {
         sortBy: 'fame',
-        rowsPerPage: 6
+        descending: true,
+        rowsPerPage: 4
       },
       sort: 'Fame',
       sorts: [
-        { text: 'Age' },
-        { text: 'Fame' },
-        { text: 'Location' }
+        { text: 'Age', sort: 'age'},
+        { text: 'Fame', sort: 'fame'},
+        { text: 'Location', sort: 'distance'}
       ],
+      sortIcon: 'arrow_downward',
       search: '',
       filterTest: () => {}
     }
@@ -116,13 +117,17 @@ export default {
 
   async mounted () {
     const users = await this.axios.get('users')
-    this.users = users.data
-    // console.log(users)
-    const test = geolib.getDistance(
-      {latitude: 51.5103, longitude: 7.49347},
-      {latitude: "51° 31' N", longitude: "7° 28' E"}
-    )
-    console.log(test)
+    for (let i in users.data) {
+      let user = users.data[i]
+      if (user.userName === this.$auth.user().userName) continue
+      let latitude = user.location.x
+      let longitude = user.location.y
+      user.distance = geolib.getDistance(
+        this.$auth.user().location,
+        {latitude: latitude, longitude, longitude}
+      )
+      this.users.push(user)
+    }
   },
 
   methods: {
@@ -140,12 +145,12 @@ export default {
     },
 
     toggleOrder () {
+      this.sortIcon = this.pagination.descending ? 'arrow_upward' : 'arrow_downward'
       this.pagination.descending = !this.pagination.descending
     },
 
-    sortBy (sorting) {
-      console.log(this.pagination)
-      this.pagination.sortBy = this.sort.text.toLowerCase()
+    sortBy (input) {
+      this.pagination.sortBy = input.sort
     }
   }
 }
