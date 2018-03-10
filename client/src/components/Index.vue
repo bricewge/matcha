@@ -135,9 +135,16 @@ export default {
       return sex === 'Male' ? '♂' : '♀'
     },
 
-    like: function (user) {
+    like: async function (user) {
       const index = this.users.indexOf(user)
-      this.users[index].liked = !this.users[index].liked
+      const userNameLiked = this.users[index].userName
+      const liked = this.users[index].liked
+      if (!liked) {
+        await this.axios.post(`/likes/${userNameLiked}`)
+      } else {
+        await this.axios.delete(`/likes/${userNameLiked}`)
+      }
+      this.users[index].liked = !liked
     },
 
     getAddressData (addressData, placeResultData, id) {

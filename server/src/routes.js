@@ -1,6 +1,7 @@
 const auth = require('./controllers/auth')
 const account = require('./controllers/account')
 const users = require('./controllers/users')
+const likes = require('./controllers/likes')
 const upload = require('./controllers/upload')
 
 module.exports = (app) => {
@@ -37,4 +38,11 @@ module.exports = (app) => {
   app.get('/users/:userName',
     auth.authenticated,
     users.show)
+
+  app.post('/likes/:userName',
+    auth.authenticated,
+    likes.create)
+  app.delete('/likes/:userName',
+    auth.authenticated,
+    likes.delete)
 }
