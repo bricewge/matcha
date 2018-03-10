@@ -1,21 +1,21 @@
 const user = require('../models/users')
 const {pick} = require('../helpers/object')
-const validate = require('../helpers/validate')
 const {AppError} = require('../helpers/error')
 
 module.exports = {
   // TODO Finalize it
   async index (req, res, next) {
     try {
-      const users = await user.getAll()
-      // console.log(users[42])
+      const users = await user.getAllForId(req.user)
+      console.log(users[42])
       let results = []
       for (let i = 0; i < users.length; i++) {
         if (users[i].activation === 'active') {
+          const liked = users[i].fromUserId === req.user.id
           let userData = pick(users[i], user.publicData)
           delete userData.activation
           // TODO Find if user is liked or blocked
-          userData.liked = false
+          userData.liked = liked
           results.push(userData)
         }
       }
