@@ -54,14 +54,15 @@
           </v-flex>
           <v-flex xs12 sm6>
             <v-select
-              v-model="formData.sex"
+              v-model="sex"
               label="Sex"
               :items="sexs"
               ></v-select>
           </v-flex>
           <v-flex xs12 sm6>
             <v-select
-              v-model="formData.sexualPreference"
+              v-model="sexualPreference"
+              ref="sexualPreference"
               label="Sexual preference"
               :items="sexualPreferences"
               ></v-select>
@@ -204,10 +205,10 @@ function initialFormData(view) {
   }
 }
 
-  export default {
-    components: {
-      DefaultForm,
-      VuetifyGoogleAutocomplete,
+export default {
+  components: {
+    DefaultForm,
+    VuetifyGoogleAutocomplete,
     FileInput
   },
 
@@ -220,7 +221,10 @@ function initialFormData(view) {
       emailRules: [ validEmail ],
       passwordRules: [ validPassword ],
       confirmPasswordRules: [ ],
-      sexs: ['Male', 'Female'],
+      sexs: [
+        {text: 'Male', value: 'm'},
+        {text: 'Female', value: 'f'},
+      ],
       sexualPreferences: ['Homo', 'Hetero', 'Bi'],
       hidePassword: true,
       alert: { type: 'error', visible: false, message: '', dismissible: true },
@@ -237,6 +241,47 @@ function initialFormData(view) {
         4: this.formData.picture4
       }
       return pictures
+    },
+
+    sex: {
+      get () {
+        return this.formData.sex
+      },
+      set (sex){
+        this.formData.sex = sex
+        this.sexualPreference = this.$refs.sexualPreference.value
+      }
+    },
+
+    sexualPreference: {
+      get () {
+        const sex = this.formData.sex
+        if (!sex) return 'Bi'
+        switch (this.formData.sexualPreference) {
+        case 'm':
+          return sex === 'm' ? 'Homo' : 'Hetero'
+        case 'f':
+          return sex === 'f' ? 'Homo' : 'Hetero'
+        default:
+          return 'Bi'
+        }
+      },
+      set (preference) {
+        const sex = this.formData.sex
+        if (!sex) return
+        let result = ''
+        switch (preference) {
+        case 'Hetero':
+          result = sex === 'm' ? 'f' : 'm'
+          break
+        case 'Homo':
+          result = sex === 'm' ? 'm' : 'f'
+          break
+        default:
+          result = 'm,f'
+        }
+        this.formData.sexualPreference = result
+      }
     }
   },
 
@@ -244,8 +289,9 @@ function initialFormData(view) {
     async updateAccount () {
       this.samePasswords()
       if (!this.$refs.defaultForm.$refs.form.validate()) return
-      // Locate the user even if she hasn't given her location
+      console.log(this.formData)
       try {
+        // Locate the user even if she hasn't given her location
         if (!this.formData.location) {
           const ip = await axios.get('/location', {baseURL: ''})
           this.formData.location = {

@@ -3,17 +3,12 @@ const db = require('../db')
 const user = require('../models/users')
 
 const SEED_SIZE = 500
-const SEXS = ['Male', 'Female']
-const SEXUAL_PREFRENCES = ['Hetero', 'Homo', 'Bi']
-
-function randItem (array) {
-  return array[Math.floor(Math.random() * array.length)]
-}
-
-// Min inclusive, max exclusive
-function getRandomInt (min, max) {
-  return Math.floor(Math.random() * (max - min + 1)) + min
-}
+const SEXS = ['f', 'm']
+const SEXUAL_PREFRENCES = ['f', 'm', 'f,m']
+const INTERESTS = ['code', '42', 'biology',
+                   'nature', 'running', 'climbing',
+                   'fake', 'sex', 'drugs',
+                   'rock\'n\'roll']
 
 function fakeUser () {
   var user = {}
@@ -23,26 +18,27 @@ function fakeUser () {
   user.lastName = faker.name.lastName()
   user.password = faker.internet.password()
   user.activation = 'active'
-  user.sex = randItem(SEXS)
-  user.sexualPreference = randItem(SEXUAL_PREFRENCES)
-  user.age = getRandomInt(18, 78)
+  user.sex = faker.random.arrayElement(SEXS)
+  user.sexualPreference = faker.random.arrayElement(SEXUAL_PREFRENCES)
+  user.age = faker.random.number({min: 18, max: 77})
   user.biography = faker.lorem.paragraph()
   user.picture0 = faker.image.avatar()
   user.picture1 = faker.image.imageUrl(400, 400, 'people')
   user.picture2 = faker.image.imageUrl(400, 400, 'people')
   user.picture3 = faker.image.imageUrl(400, 400, 'people')
   user.picture4 = faker.image.imageUrl(400, 400, 'people')
-  user.locationName = faker.image.city()
+  user.locationName = faker.address.city()
   user.location = {
     latitude: faker.address.latitude(),
     longitude: faker.address.longitude()
   }
-  user.fame = getRandomInt(42, 420)
+  user.fame = faker.random.number({min: 42, max: 420})
   return user
 }
 
 // TODO Manager error.code 'ER_DUP_ENTRY'
 // TODO Generate activated user: sex, sexual preferences
+// TODO Add interests
 async function seedUsers () {
   let userCount = 0
   // NOTE Use seed as a workaround until unique method is published
@@ -50,7 +46,7 @@ async function seedUsers () {
   faker.seed(userCount)
   db.connect()
   try {
-    await db.drop('users')
+    // await db.drop('users')
     await user.getAll()
       .then(function (data) { userCount = data.length })
     let promises = []

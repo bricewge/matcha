@@ -51,9 +51,8 @@ exports.update = async function (input) {
   return exports.getAllById({'id': id})
 }
 
-// TODO Return interests and filter by sex
 exports.getAllForId = async function (input) {
-  validate.input(input, ['id'])
+  validate.input(input, ['id', 'sex', 'sexualPreference'])
   const query = `
   SELECT *, l.fromUserId AS liked, b.fromUserId AS blocked
   FROM users u
@@ -67,9 +66,12 @@ exports.getAllForId = async function (input) {
                                    ']') AS interests
              FROM interests
              GROUP BY userId) i
-    ON u.id = i.userId;
+    ON u.id = i.userId
+  WHERE FIND_IN_SET(?, sexualPreference) AND FIND_IN_SET(sex, ?)
+  ;
   `
-  const result = await db.get().queryAsync(query, [input.id, input.id])
+  input = [input.id, input.id, input.sex, input.sexualPreference]
+  const result = await db.get().queryAsync(query, input)
   if (!result[0]) throw new AppError('Invalid userName', 400)
   return result
 }

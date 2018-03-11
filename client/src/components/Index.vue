@@ -53,7 +53,7 @@
           <div>
             <div class="headline" v-text="props.item.userName"/>
             <span class="grey--text">
-              {{ sexIcon(props.item.sex) }} {{ props.item.firstName }} {{ props.item.lastName }}
+              {{ sexSign(props.item.sex) }} {{ props.item.firstName }} {{ props.item.lastName }}
             </span>
           </div>
         </v-card-title>
@@ -140,8 +140,8 @@ export default {
   },
 
   methods: {
-    sexIcon: function (sex) {
-      return sex === 'Male' ? '♂' : '♀'
+    sexSign: function (sex) {
+      return sex === 'm' ? '♂' : '♀'
     },
 
     like: async function (user) {

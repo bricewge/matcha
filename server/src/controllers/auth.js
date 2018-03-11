@@ -74,8 +74,7 @@ module.exports = {
       }
       const token = authHeader.substr(7)
       const decoded = jwt.verify(token, config.authentication.jwtSecret)
-      req.user = decoded
-      req.user.id = await user.getIdByUserName(req.user)
+      req.user = await user.getAllByUserName(decoded)
       next()
     } catch (err) {
       next(err)

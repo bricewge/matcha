@@ -7,20 +7,19 @@ module.exports = {
   async index (req, res, next) {
     try {
       const users = await user.getAllForId(req.user)
-      console.log(users[248])
+      console.log(users[247])
       let results = []
       for (let i = 0; i < users.length; i++) {
         if (users[i].activation === 'active' &&
             users[i].blocked !== req.user.id) {
           let userData = pick(users[i], user.publicData)
           delete userData.activation
-          // TODO Find if user is liked or blocked
-          userData.liked = users[i].fromUserId === req.user.id
+          userData.liked = users[i].liked === req.user.id
           userData.interests = JSON.parse(users[i].interests) || []
           results.push(userData)
         }
       }
-      console.log(results[42])
+      console.log(results[247])
       res.json(results)
     } catch (err) {
       next(err)
