@@ -149,9 +149,9 @@ export default {
       const userNameLiked = this.users[index].userName
       const liked = this.users[index].liked
       if (!liked) {
-        await this.axios.post(`/likes/${userNameLiked}`)
+        await this.axios.post(`/like/${userNameLiked}`)
       } else {
-        await this.axios.delete(`/likes/${userNameLiked}`)
+        await this.axios.delete(`/like/${userNameLiked}`)
       }
       this.users[index].liked = !liked
     },

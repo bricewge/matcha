@@ -40,10 +40,10 @@ module.exports = (app) => {
     auth.authenticated,
     users.show)
 
-  app.post('/likes/:userName',
+  app.post('/like/:userName',
     auth.authenticated,
     likes.create)
-  app.delete('/likes/:userName',
+  app.delete('/like/:userName',
     auth.authenticated,
     likes.delete)
 

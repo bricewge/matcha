@@ -19,6 +19,7 @@ module.exports = {
           results.push(userData)
         }
       }
+      console.log(results[42])
       res.json(results)
     } catch (err) {
       next(err)
