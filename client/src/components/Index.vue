@@ -25,6 +25,15 @@
     :pagination.sync="pagination"
     :search="search"
     >
+    <template slot="no-data">
+      <v-layout align-center justify-center>
+        <v-progress-circular
+          indeterminate
+          :size="50"
+          color="secondary"
+          ></v-progress-circular>
+      </v-layout>
+    </template>
     <v-flex
       slot="item"
       slot-scope="props"
