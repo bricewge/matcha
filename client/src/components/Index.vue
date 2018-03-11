@@ -58,9 +58,9 @@
           </div>
         </v-card-title>
         <v-card-actions>
-          <span class="black--text">
+          <span class="mx-auto black--text">
             <v-icon color="black">whatshot</v-icon>
-            {{ props.item.fame || 0}}
+            <span>{{ props.item.fame || 0}}</span>
           </span>
           <v-spacer></v-spacer>
           <v-btn
