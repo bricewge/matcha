@@ -54,11 +54,20 @@ exports.update = async function (input) {
 // TODO Return interests and filter by sex
 exports.getAllForId = async function (input) {
   validate.input(input, ['id'])
-  const query = `SELECT *
-                 FROM users
-                 LEFT JOIN likes
-                   ON users.id = toUserId;`
-  const result = await db.get().queryAsync(query, input.userName)
+  const query = `
+  SELECT *
+  FROM users u
+  LEFT JOIN (SELECT * FROM likes WHERE fromUserId = ?) l
+  ON u.id = l.toUserId
+  LEFT JOIN (SELECT userId, CONCAT('[',
+                                   GROUP_CONCAT(CONCAT('"', interest, '"')
+                                                SEPARATOR ','),
+                                   ']') AS interests
+             FROM interests
+             GROUP BY userId) i
+  ON u.id = i.userId;
+  `
+  const result = await db.get().queryAsync(query, input.id)
   if (!result[0]) throw new AppError('Invalid userName', 400)
   return result
 }
