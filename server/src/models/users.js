@@ -55,19 +55,21 @@ exports.update = async function (input) {
 exports.getAllForId = async function (input) {
   validate.input(input, ['id'])
   const query = `
-  SELECT *
+  SELECT *, l.fromUserId AS liked, b.fromUserId AS blocked
   FROM users u
   LEFT JOIN (SELECT * FROM likes WHERE fromUserId = ?) l
-  ON u.id = l.toUserId
+    ON u.id = l.toUserId
+  LEFT JOIN (SELECT * FROM blocks WHERE fromUserId = ?) b
+    ON u.id = b.toUserId
   LEFT JOIN (SELECT userId, CONCAT('[',
                                    GROUP_CONCAT(CONCAT('"', interest, '"')
                                                 SEPARATOR ','),
                                    ']') AS interests
              FROM interests
              GROUP BY userId) i
-  ON u.id = i.userId;
+    ON u.id = i.userId;
   `
-  const result = await db.get().queryAsync(query, input.id)
+  const result = await db.get().queryAsync(query, [input.id, input.id])
   if (!result[0]) throw new AppError('Invalid userName', 400)
   return result
 }
