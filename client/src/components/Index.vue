@@ -115,7 +115,7 @@ export default {
         { text: 'Age', sort: 'age'},
         { text: 'Fame', sort: 'fame'},
         { text: 'Location', sort: 'distance'},
-        { text: 'Interests', sort: 'interests'}
+        { text: 'Interests', sort: 'interestsInCommon'}
       ],
       sortIcon: 'arrow_downward',
       search: '',
@@ -136,6 +136,7 @@ export default {
       )
       this.users.push(user)
     }
+    console.log(this.users)
   },
 
   methods: {

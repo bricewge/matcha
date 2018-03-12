@@ -25,7 +25,6 @@ const transporter = nodemailer.createTransport({
 // - wrong type
 // - already exists
 
-// Maybe should be merged in loggedUserData
 function jwtSignUser (user) {
   const payload = pick(user, ['userName', 'activation'])
   return jwt.sign(payload,
@@ -75,6 +74,7 @@ module.exports = {
       const token = authHeader.substr(7)
       const decoded = jwt.verify(token, config.authentication.jwtSecret)
       req.user = await user.getAllByUserName(decoded)
+      req.user.interests = await interest.getAllByUserId({userId: req.user.id})
       next()
     } catch (err) {
       next(err)

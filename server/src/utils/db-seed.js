@@ -1,61 +1,96 @@
 const faker = require('faker')
 const db = require('../db')
 const user = require('../models/users')
+const interest = require('../models/interests')
 
 const SEED_SIZE = 500
-const SEXS = ['f', 'm']
-const SEXUAL_PREFRENCES = ['f', 'm', 'f,m']
-const INTERESTS = ['code', '42', 'biology',
-                   'nature', 'running', 'climbing',
-                   'fake', 'sex', 'drugs',
-                   'rock\'n\'roll']
+const SEXS = ['m', 'f']
+const SEXUAL_PREFRENCES = ['f', 'm', 'm,f']
+const INTERESTS = [
+  'code', '42', 'biology',
+  'nature', 'running', 'climbing',
+  'fake', 'sex', 'drugs',
+  'rock\'n\'roll'
+]
 
-function fakeUser () {
-  var user = {}
-  user.userName = faker.internet.userName()
-  user.email = faker.internet.email()
-  user.firstName = faker.name.firstName()
-  user.lastName = faker.name.lastName()
-  user.password = faker.internet.password()
-  user.activation = 'active'
-  user.sex = faker.random.arrayElement(SEXS)
-  user.sexualPreference = faker.random.arrayElement(SEXUAL_PREFRENCES)
-  user.age = faker.random.number({min: 18, max: 77})
-  user.biography = faker.lorem.paragraph()
-  user.picture0 = faker.image.avatar()
-  user.picture1 = faker.image.imageUrl(400, 400, 'people')
-  user.picture2 = faker.image.imageUrl(400, 400, 'people')
-  user.picture3 = faker.image.imageUrl(400, 400, 'people')
-  user.picture4 = faker.image.imageUrl(400, 400, 'people')
-  user.locationName = faker.address.city()
-  user.location = {
-    latitude: faker.address.latitude(),
-    longitude: faker.address.longitude()
+function fakeUsers (count) {
+  let users = {}
+  let emails = {}
+  for (let i = 0; i < count; i++) {
+    // We dont wan't duplicates
+    let userName = faker.internet.userName()
+    while (users[userName]) {
+      userName = faker.internet.userName()
+    }
+    let email = faker.internet.email()
+    while (emails[email]) {
+      email = faker.internet.email()
+    }
+    const sex = faker.random.number({min: 0, max: 1})
+    const firstName = faker.name.firstName(sex)
+    const lastName = faker.name.lastName()
+    const password = faker.internet.password()
+    const user = {
+      userName: userName,
+      email: email,
+      firstName: firstName,
+      lastName: lastName,
+      password: password,
+      activation: 'active',
+      sex: SEXS[sex],
+      sexualPreference: faker.random.arrayElement(SEXUAL_PREFRENCES),
+      age: faker.random.number({min: 18, max: 77}),
+      biography: faker.lorem.paragraph(),
+      picture0: `https://api.adorable.io/avatars/400/${userName}.png`,
+      picture1: `https://api.adorable.io/avatars/400/${email}.png`,
+      picture2: `https://api.adorable.io/avatars/400/${firstName}.png`,
+      picture3: `https://api.adorable.io/avatars/400/${lastName}.png`,
+      picture4: `https://api.adorable.io/avatars/400/${password}.png`,
+      locationName: faker.address.city(),
+      location: {
+        latitude: faker.address.latitude(),
+        longitude: faker.address.longitude()
+      },
+      fame: faker.random.number({min: 42, max: 420})
+    }
+    users[userName] = user
+    emails[email] = email
   }
-  user.fame = faker.random.number({min: 42, max: 420})
-  return user
+  return users
 }
 
-// TODO Manager error.code 'ER_DUP_ENTRY'
-// TODO Generate activated user: sex, sexual preferences
-// TODO Add interests
+// TODO Manage error.code 'ER_DUP_ENTRY'
+// TODO never generate duplicates
 async function seedUsers () {
-  let userCount = 0
-  // NOTE Use seed as a workaround until unique method is published
-  // https://github.com/Marak/faker.js/issues/604
-  faker.seed(userCount)
-  db.connect()
   try {
+    db.connect()
     // await db.drop('users')
-    await user.getAll()
-      .then(function (data) { userCount = data.length })
+    let userCount = (await user.getAll()).length
+    let addedUsers = 0
+    let maxUserId = 1
+    const users = fakeUsers(SEED_SIZE - userCount)
     let promises = []
-    for (var i = 0; i < SEED_SIZE - userCount; i++) {
-      promises.push(user.create(fakeUser()).then(() => userCount++))
+    for (let index in users) {
+      promises.push(
+        user.create(users[index])
+          .then(function (res) {
+            maxUserId = Math.max(res.id, maxUserId)
+          })
+      )
+      addedUsers++
     }
     await Promise.all(promises)
-    console.log('Users:', userCount)
-    // console.log(await Users.update({id: '500', sex: 'male'}))
+    console.log('New users:', addedUsers)
+    for (let i = 0; i < addedUsers; i++) {
+      let interests = faker.random.arrayElements(INTERESTS)
+      for (let j in interests) {
+        promises.push(interest.create({
+          userId: maxUserId - i,
+          interest: interests[j]
+        }))
+      }
+    }
+    await Promise.all(promises)
   } catch (err) { console.log(err) }
   db.disconnect()
 }

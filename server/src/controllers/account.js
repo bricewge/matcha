@@ -9,9 +9,9 @@ const {pick} = require('../helpers/object')
 async function activateUser (input) {
   const data = await user.getAllById(input)
   const interests = await interest.getAllByUserId({userId: input.id})
-  const require = ['sex', 'sexualPreference', 'age',
+  const required = ['sex', 'sexualPreference', 'age',
                    'biography', 'picture0', 'location']
-  const hasAllKeys = require.every(i => !!data[i])
+  const hasAllKeys = required.every(i => !!data[i])
   let activation = hasAllKeys && interests.length ? 'active' : 'register'
   await user.update({id: input.id, activation: activation})
 }

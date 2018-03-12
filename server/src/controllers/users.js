@@ -1,6 +1,7 @@
 const user = require('../models/users')
 const {pick} = require('../helpers/object')
 const {AppError} = require('../helpers/error')
+const {commonItems} = require('../helpers/array')
 
 module.exports = {
   // TODO Finalize it
@@ -16,6 +17,7 @@ module.exports = {
           delete userData.activation
           userData.liked = users[i].liked === req.user.id
           userData.interests = JSON.parse(users[i].interests) || []
+          userData.interestsInCommon = commonItems(req.user.interests, userData.interests)
           results.push(userData)
         }
       }
