@@ -8,7 +8,6 @@ module.exports = {
   async index (req, res, next) {
     try {
       const users = await user.getAllForId(req.user)
-      console.log(users[247])
       let results = []
       for (let i = 0; i < users.length; i++) {
         if (users[i].activation === 'active' &&
@@ -21,7 +20,6 @@ module.exports = {
           results.push(userData)
         }
       }
-      console.log(results[247])
       res.json(results)
     } catch (err) {
       next(err)

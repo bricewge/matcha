@@ -1,102 +1,103 @@
 <template>
 <v-container fluid grid-list-sm>
   <v-card class="my-3 px-2 elevation-1 grey lighten-3">
-  <v-form
-    @submit.prevent="filter"
-    >
-    <v-layout wrap>
-      <v-flex xs2>
-        <v-text-field
-          mask="##"
-          label="Age min"
-          ref="ageMin"
-          box
-          ></v-text-field>
-      </v-flex>
-      <v-flex xs2>
-        <v-text-field
-          mask="##"
-          label="Age max"
-          ref="ageMax"
-          box
-          ></v-text-field>
-      </v-flex>
-      <v-flex xs2>
-        <v-text-field
-          mask="####"
-          label="Fame min"
-          ref="fameMin"
-          class="fameInput"
-          box
-          ></v-text-field>
-      </v-flex>
-      <v-flex xs2>
-        <v-text-field
-          mask="####"
-          label="Fame max"
-          class="fameInput"
-          ref="fameMax"
-          box
-          ></v-text-field>
-      </v-flex>
-      <v-flex xs4>
-        <v-text-field
-          mask="######"
-          ref="distanceMax"
-          label="Distance"
-          box
-          ></v-text-field>
-      </v-flex>
-      <v-flex xs4>
-        <v-select
-          v-model="interests"
-          label="Interests"
-          multiple
-          append-icon
-          chips
-          deletable-chips
-          tags
-          ></v-select>
-      </v-flex>
-      <v-flex xs4>
-        <v-text-field
-          label="Search"
-          v-model="search"
-          ></v-text-field>
-      </v-flex>
-      <v-flex xs4>
-        <v-select
-          v-model="sort"
-          @input="sortBy"
-          :items="sorts"
-          item-value="text"
-          return-object
-          :prepend-icon="sortIcon"
-          :prepend-icon-cb="toggleOrder"
-          label="Sort by"
-          ></v-select>
-      </v-flex>
-    </v-layout>
-  </v-form>
+    <v-form
+      @submit.prevent="filter"
+      >
+      <v-layout wrap>
+        <v-flex xs2>
+          <v-text-field
+            v-model="ageMin"
+            mask="##"
+            label="Age min"
+            box
+            ></v-text-field>
+        </v-flex>
+        <v-flex xs2>
+          <v-text-field
+            v-model="ageMax"
+            mask="##"
+            label="Age max"
+            box
+            ></v-text-field>
+        </v-flex>
+        <v-flex xs2>
+          <v-text-field
+            v-model="fameMin"
+            mask="####"
+            label="Fame min"
+            class="fameInput"
+            box
+            ></v-text-field>
+        </v-flex>
+        <v-flex xs2>
+          <v-text-field
+            v-model="fameMax"
+            mask="####"
+            label="Fame max"
+            class="fameInput"
+            box
+            ></v-text-field>
+        </v-flex>
+        <v-flex xs4>
+          <v-text-field
+            v-model="distanceMax"
+            mask="######"
+            label="Distance"
+            box
+            ></v-text-field>
+        </v-flex>
+        <v-flex xs4>
+          <v-select
+            v-model="interests"
+            label="Interests"
+            multiple
+            append-icon
+            chips
+            deletable-chips
+            tags
+            small
+            ></v-select>
+        </v-flex>
+        <v-flex xs4>
+          <v-text-field
+            label="Search"
+            v-model="search"
+            ></v-text-field>
+        </v-flex>
+        <v-flex xs4>
+          <v-select
+            v-model="sort"
+            @input="sortBy"
+            :items="sorts"
+            item-value="text"
+            return-object
+            :prepend-icon="sortIcon"
+            :prepend-icon-cb="toggleOrder"
+            label="Sort by"
+            ></v-select>
+        </v-flex>
+      </v-layout>
+    </v-form>
   </v-card>
   <v-data-iterator
     content-tag="v-layout"
     row
     wrap
-    :items="users"
+    :items="filteredUsers"
     :rows-per-page-items="rowsPerPageItems"
-      :pagination.sync="pagination"
-      :search="search"
-      >
-      <template slot="no-data">
-        <v-layout align-center justify-center>
-          <v-progress-circular
-            indeterminate
-          :size="50"
-          color="secondary"
-          ></v-progress-circular>
-      </v-layout>
-    </template>
+    :pagination.sync="pagination"
+    :search="search"
+    >
+    <!-- <template slot="no-data"> -->
+    <!--   <v-layout align-center justify-center> -->
+    <!--     <v-progress-circular -->
+    <!--       indeterminate -->
+    <!--       :size="50" -->
+    <!--       color="secondary" -->
+    <!--       ></v-progress-circular> -->
+    <!--   </v-layout> -->
+    <!-- </template> -->
     <v-flex
       slot="item"
       slot-scope="props"
@@ -146,43 +147,41 @@
 
 <!-- TODO Filter by age, fame, localisation, tags -->
 <script>
-import VuetifyGoogleAutocomplete from 'vuetify-google-autocomplete'
 import geolib from 'geolib'
 
-function compare (a,b) {
-  if (a.fame < b.fame)
-    return -1;
-  if (a.fame > b.fame)
-    return 1;
-  return 0;
+function commonItems (a, b) {
+  var setA = new Set(a)
+  var setB = new Set(b)
+  var intersection = new Set([...setA].filter(x => setB.has(x)))
+  return intersection.size
 }
 
-
 export default {
-  components: {
-    VuetifyGoogleAutocomplete
-  },
-
   data () {
     return {
       users: [],
       interests: [],
       rowsPerPageItems: [4, 6, 12],
       pagination: {
-        sortBy: 'fame',
+        sortBy: 'points',
         descending: true,
         rowsPerPage: 4
       },
-      sort: 'Fame',
+      sort: 'Smart',
       sorts: [
         { text: 'Age', sort: 'age'},
         { text: 'Fame', sort: 'fame'},
         { text: 'Location', sort: 'distance'},
-        { text: 'Interests', sort: 'interestsInCommon'}
+        { text: 'Interests', sort: 'interestsInCommon'},
+        { text: 'Smart', sort: 'points'}
       ],
       sortIcon: 'arrow_downward',
       search: '',
-      filterTest: () => {}
+      ageMin: '',
+      ageMax: '',
+      fameMin: '',
+      fameMax: '',
+      distanceMax: ''
     }
   },
 
@@ -197,9 +196,30 @@ export default {
         this.$auth.user().location,
         {latitude: latitude, longitude, longitude}
       )
+      user.points = (10000000000 / user.distance) + (user.interestsInCommon * 1000) + user.fame
+      if (user.userName === 'Eriberto.Gusikowski' || user.userName === 'Adonis_Kuhic') console.log(user)
       this.users.push(user)
     }
     console.log(this.users)
+  },
+
+  computed: {
+    filteredUsers (input) {
+      let users = this.users
+      let ageMin = parseInt(this.ageMin)
+      let ageMax = parseInt(this.ageMax)
+      let fameMin = parseInt(this.fameMin)
+      let fameMax = parseInt(this.fameMax)
+      let distanceMax = parseInt(this.distanceMax) * 1000
+      if (ageMin) users = users.filter(u => u.age >= ageMin)
+      if (ageMax) users = users.filter(u => u.age <= ageMax)
+      if (fameMin) users = users.filter(u => u.fame >= fameMin)
+      if (fameMax) users = users.filter(u => u.fame <= fameMax)
+      if (distanceMax) users = users.filter(u => u.distance <= distanceMax)
+      if (this.interests.length) users = users.filter(u => commonItems(this.interests, u.interests) === this.interests.length)
+      console.log(this.interests)
+      return users
+    }
   },
 
   methods: {
@@ -230,8 +250,7 @@ export default {
 
     sortBy (input) {
       this.pagination.sortBy = input.sort
-    }
-
+    },
   }
 }
 </script>
