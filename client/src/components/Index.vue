@@ -81,8 +81,6 @@
 </v-container>
 </template>
 
-<!-- TODO Sort by location -->
-<!-- TODO Use separated selector to sort and reverse the sort -->
 <!-- TODO Filter by age, fame, localisation, tags -->
 <script>
 import VuetifyGoogleAutocomplete from 'vuetify-google-autocomplete'
@@ -116,7 +114,8 @@ export default {
       sorts: [
         { text: 'Age', sort: 'age'},
         { text: 'Fame', sort: 'fame'},
-        { text: 'Location', sort: 'distance'}
+        { text: 'Location', sort: 'distance'},
+        { text: 'Interests', sort: 'interests'}
       ],
       sortIcon: 'arrow_downward',
       search: '',

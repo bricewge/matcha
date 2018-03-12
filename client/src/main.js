@@ -26,6 +26,7 @@ Vue.use(require('@websanova/vue-auth'), {
   refreshData: {enabled: false},
   registerData: {autoLogin: true, redirect: '/account'},
   logoutData: {redirect: '/login'},
+  notFoundRedirect: {path: '/'},
   rolesVar: 'activation'
 })
 
