@@ -1,34 +1,97 @@
 <template>
-<v-container fluid grid-list-md>
-  <div class="text-xs-center py-2">
-    <v-select
-      v-model="sort"
-      @input="sortBy"
-      :items="sorts"
-      item-value="text"
-      return-object
-      :prepend-icon="sortIcon"
-      :prepend-icon-cb="toggleOrder"
-      label="Sort by"
-      ></v-select>
-    <v-text-field
-      label="Test search"
-      v-model="search"
-      ></v-text-field>
-  </div>
+<v-container fluid grid-list-sm>
+  <v-card class="my-3 px-2 elevation-1 grey lighten-3">
+  <v-form
+    @submit.prevent="filter"
+    >
+    <v-layout wrap>
+      <v-flex xs2>
+        <v-text-field
+          mask="##"
+          label="Age min"
+          ref="ageMin"
+          box
+          ></v-text-field>
+      </v-flex>
+      <v-flex xs2>
+        <v-text-field
+          mask="##"
+          label="Age max"
+          ref="ageMax"
+          box
+          ></v-text-field>
+      </v-flex>
+      <v-flex xs2>
+        <v-text-field
+          mask="####"
+          label="Fame min"
+          ref="fameMin"
+          class="fameInput"
+          box
+          ></v-text-field>
+      </v-flex>
+      <v-flex xs2>
+        <v-text-field
+          mask="####"
+          label="Fame max"
+          class="fameInput"
+          ref="fameMax"
+          box
+          ></v-text-field>
+      </v-flex>
+      <v-flex xs4>
+        <v-text-field
+          mask="######"
+          ref="distanceMax"
+          label="Distance"
+          box
+          ></v-text-field>
+      </v-flex>
+      <v-flex xs4>
+        <v-select
+          v-model="interests"
+          label="Interests"
+          multiple
+          append-icon
+          chips
+          deletable-chips
+          tags
+          ></v-select>
+      </v-flex>
+      <v-flex xs4>
+        <v-text-field
+          label="Search"
+          v-model="search"
+          ></v-text-field>
+      </v-flex>
+      <v-flex xs4>
+        <v-select
+          v-model="sort"
+          @input="sortBy"
+          :items="sorts"
+          item-value="text"
+          return-object
+          :prepend-icon="sortIcon"
+          :prepend-icon-cb="toggleOrder"
+          label="Sort by"
+          ></v-select>
+      </v-flex>
+    </v-layout>
+  </v-form>
+  </v-card>
   <v-data-iterator
     content-tag="v-layout"
     row
     wrap
     :items="users"
     :rows-per-page-items="rowsPerPageItems"
-    :pagination.sync="pagination"
-    :search="search"
-    >
-    <template slot="no-data">
-      <v-layout align-center justify-center>
-        <v-progress-circular
-          indeterminate
+      :pagination.sync="pagination"
+      :search="search"
+      >
+      <template slot="no-data">
+        <v-layout align-center justify-center>
+          <v-progress-circular
+            indeterminate
           :size="50"
           color="secondary"
           ></v-progress-circular>
@@ -168,9 +231,13 @@ export default {
     sortBy (input) {
       this.pagination.sortBy = input.sort
     }
+
   }
 }
 </script>
 
 <style scoped>
+.subheader {
+    align-items: flex-end;
+}
 </style>
