@@ -4,6 +4,7 @@ import Vue from 'vue'
 import axios from 'axios'
 import VueAxios from 'vue-axios'
 import Vuetify from 'vuetify'
+import VueSocketio from 'vue-socket.io'
 import { sync } from 'vuex-router-sync'
 import App from './App'
 import router from './router'
@@ -29,6 +30,8 @@ Vue.use(require('@websanova/vue-auth'), {
   notFoundRedirect: {path: '/'},
   rolesVar: 'activation'
 })
+
+Vue.use(VueSocketio, '/')
 
 sync(store, router)
 

@@ -27,6 +27,11 @@ module.exports = {
         target: `http://${api.host}:${api.port}`,
         changeOrigin: true
       },
+      '/socket.io': {
+        target: `http://${api.host}:${api.port}`,
+        changeOrigin: true,
+        ws: true
+      },
       '/location': {
         target: 'http://freegeoip.net/json/',
         changeOrigin: true,

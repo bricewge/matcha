@@ -1,4 +1,8 @@
+const app = require('express')()
+const server = require('http').Server(app)
+const io = require('socket.io')(server)
 const express = require('express')
+// const http = require('http').Server(app)
 const bodyParser = require('body-parser')
 const morgan = require('morgan')
 const helmet = require('helmet')
@@ -8,7 +12,7 @@ const db = require('./db')
 const config = require('./config')
 
 async function main () {
-  const app = express()
+  // const app = express()
   app.use(morgan('combined'))
   app.use(bodyParser.json())
   app.use(helmet()) // Add secure HTTP headers
@@ -34,8 +38,15 @@ async function main () {
     process.kill(process.pid, 'SIGUSR2')
   })
 
-  app.listen(config.port, function () {
+  server.listen(config.port, function () {
     console.log(`Server listening on port ${config.port}`)
+  })
+  // Socket test
+  io.on('connection', function (socket) {
+    console.log('a user connected')
+    socket.on('disconnect', function () {
+      console.log('user disconnected')
+    })
   })
 }
 

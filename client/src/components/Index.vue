@@ -197,7 +197,6 @@ export default {
         {latitude: latitude, longitude, longitude}
       )
       user.points = (10000000000 / user.distance) + (user.interestsInCommon * 1000) + user.fame
-      if (user.userName === 'Eriberto.Gusikowski' || user.userName === 'Adonis_Kuhic') console.log(user)
       this.users.push(user)
     }
     console.log(this.users)
