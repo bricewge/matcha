@@ -10,9 +10,7 @@
     class="hidden-sm-and-down"
     ></v-text-field>
   <v-spacer></v-spacer>
-  <v-btn icon disabled class="btn--plain">
-    <v-icon>notifications</v-icon>
-  </v-btn>
+  <notifications/>
   <v-btn flat class="btn--plain"
          router to="register"
          v-if="!$auth.check() && $route.name !== 'register'"
@@ -73,9 +71,8 @@
 </v-toolbar>
 </template>
 
-<!-- TODO Logout should logout and redirect to login -->
-<!-- TODO If the user has a profile picture display it -->
 <script>
+import Notifications from '@/components/Notifications'
 import { mapState } from 'vuex'
 
 function capitalize (string) {
@@ -83,11 +80,14 @@ function capitalize (string) {
 }
 
 export default {
+  components: {
+    Notifications
+  },
+
   data () {
     return {
       menu: false,
       items: [
-        // { title: 'My profile', icon: 'account_box', action: 'profile' },
         { title: 'Chat', icon: 'chat', action: 'chat' },
         { title: 'Settings', icon: 'settings', action: 'account' },
         { title: 'Log out', icon: 'lock', action: 'logout' }
