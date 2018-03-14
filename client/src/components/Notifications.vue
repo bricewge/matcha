@@ -2,6 +2,7 @@
   <v-menu
     v-if="$auth.check()"
     :close-on-content-click="false"
+    :disabled="!notifications.length"
     v-model="visible"
     offset-y
     bottom
@@ -12,11 +13,10 @@
     slot="activator"
     icon
     :disabled="!notifications.length"
+    @click="watchingNotifications"
     class="btn--plain">
-    <v-badge left overlap color="red">
-      <span slot="badge">{{unseenNotifications }}</span>
-      <v-icon medium>notifications</v-icon>
-    </v-badge>
+      <v-icon v-if="unseenNotification" medium>notifications_active</v-icon>
+      <v-icon v-else medium>notifications</v-icon>
   </v-btn>
     <v-card>
         <v-card-title fixed class="subheading heavy grey lighten-3">
@@ -24,7 +24,7 @@
         </v-card-title>
       <v-list>
         <v-list-tile
-          v-for="notif in notifications"
+          v-for="(notif, index) in notifications"
           :key="notif.id"
           avatar
           >
@@ -36,7 +36,9 @@
             <v-list-tile-sub-title>{{ notif.type }} you</v-list-tile-sub-title>
           </v-list-tile-content>
             <v-list-tile-action>
-              <v-btn icon>
+              <v-btn
+                @click="removeNotification(index)"
+                icon>
                 <v-icon color="grey lighten-1">cancel</v-icon>
               </v-btn>
             </v-list-tile-action>
@@ -51,7 +53,7 @@
 export default {
   data () {
     return {
-      visible: true,
+      visible: false,
       notifications: [
         {
           id: 42,
@@ -86,8 +88,26 @@ export default {
   },
 
   computed: {
-    unseenNotifications: function () {
-      return this.notifications.filter(n => !n.seen).length
+    unseenNotification: function () {
+      return this.notifications.some(n => !n.seen)
+    }
+  },
+
+  methods: {
+    removeNotification: function (index) {
+      console.log(`Notification ${this.notifications[index].id} removed`)
+      this.notifications.splice(index, 1)
+      // TODO Send message via websocket to remove notif
+    },
+
+    watchingNotifications: function () {
+      for (let i in this.notifications) {
+        if (!this.notifications[i].seen) {
+          this.notifications[i].seen = true
+          console.log(`Notification ${this.notifications[i].id} seen`)
+          // TODO Send message via websocket to remove notif
+        }
+      }
     }
   }
 }

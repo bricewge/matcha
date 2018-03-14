@@ -145,7 +145,7 @@
 </v-container>
 </template>
 
-<!-- TODO Filter by age, fame, localisation, tags -->
+<!-- TODO Use the filter function to diferenciate bettween no data and no results -->
 <script>
 import geolib from 'geolib'
 
