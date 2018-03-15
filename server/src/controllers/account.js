@@ -1,5 +1,6 @@
 const fs = require('fs')
 const url = require('url')
+const {URL} = require('url')
 const path = require('path')
 const user = require('../models/users')
 const interest = require('../models/interests')
@@ -22,7 +23,6 @@ module.exports = {
       let filter = user.publicData.concat(user.privateData)
       let userData = pick(req.body, filter)
       userData.id = req.user.id
-      console.log(req.body)
       if (userData.hasOwnProperty('email')) validate.email(userData.email)
       if (userData.hasOwnProperty('password')) validate.password(userData)
       if (userData.age < 18) delete userData.age
@@ -37,16 +37,10 @@ module.exports = {
       // Add file
       for (let file in req.files) {
         console.log(userData.picture0)
-        // const picturelUrl = url.parse(userData[key])
-        // let picturePath = path.parse(picturelUrl.path)
-        // picturePath.abs = process.cwd() + picturePath.dir + picturePath.base
-        // console.log(picturePath)
-        // if (picturePath.dir === '/public/uploads' &&
-        //     fs.existsSync(picturePath.abs)) {
-        //   fs.unlinkSync(picturePath.abs)
-        // }
-        const url = `${req.headers.origin}/${req.files[file][0].path}`
-        userData[file] = url
+        let referer = new URL(req.headers.referer)
+        const imageUrl = `${referer.origin}/${req.files[file][0].path}`
+        console.log(referer.origin)
+        userData[file] = imageUrl
       }
       // Remove File
       for (let i = 0; i < 5; i++) {
