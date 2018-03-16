@@ -46,12 +46,13 @@
         <v-list-tile>
             <v-select
               v-model="user.interests"
+              class="elevation-0"
               multiple
               append-icon
               single-line
               chips
               solo
-              class="elevation-0"
+              readonly
               tags
               ></v-select>
         </v-list-tile>
@@ -60,7 +61,7 @@
         <p>{{ user.biography }}</p>
       </v-card-text>
       <v-card-actions v-if="user.userName != $auth.user().userName">
-        <v-btn icon class="ml-3 my-1" @click="fake">
+        <v-btn icon :disabled="user.fake"class="ml-3 my-1" @click="fake">
         <v-tooltip bottom>
           <v-icon large slot="activator" color="grey">
             report
@@ -115,6 +116,7 @@ export default {
       const user = await this.axios.get(`/users/${this.$route.params.userName}`)
       console.log(user.data, this)
       this.user = user.data
+      // this.user.fake = true
       // The separeate counter avoid getting some nulls in the v-for when
       // the pictures aren't all set
       let picturesCount = 0
@@ -167,22 +169,25 @@ export default {
         await this.axios.delete(`/like/${this.$route.params.userName}`)
       }
       this.user.liked = !this.user.liked
-      console.log(this.user.liked)
+      // console.log(this.user.liked)
     },
 
     block: async function () {
-      // TODO Block the user
       if (!this.user.blocked) {
         await this.axios.post(`/block/${this.$route.params.userName}`)
       } else {
         await this.axios.delete(`/block/${this.$route.params.userName}`)
       }
       this.user.blocked = !this.user.blocked
-      console.log(this.user.liked)
+      // console.log(this.user.blocked)
     },
 
     fake: async function () {
-      // TODO Report as fake
+      if (!this.user.fake) {
+        await this.axios.post(`/fake/${this.$route.params.userName}`)
+        this.user.fake = !this.user.fake
+        // console.log(this.user.liked)
+      }
     }
   },
 

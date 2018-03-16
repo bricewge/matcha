@@ -5,6 +5,7 @@ const likes = require('./controllers/likes')
 const block = require('./controllers/block')
 const upload = require('./controllers/upload')
 const notification = require('./controllers/notifications')
+const fake = require('./controllers/fakes')
 
 module.exports = (app) => {
   app.get('/', (req, res) => {
@@ -39,7 +40,7 @@ module.exports = (app) => {
     users.index)
   app.get('/users/:userName',
     auth.authenticated,
-    users.show)
+    users.profile)
 
   app.post('/like/:userName',
     auth.authenticated,
@@ -54,6 +55,10 @@ module.exports = (app) => {
   app.delete('/block/:userName',
     auth.authenticated,
     block.delete)
+
+  app.post('/fake/:userName',
+    auth.authenticated,
+    fake.create)
 
   app.get('/notifications',
     auth.authenticated,

@@ -107,12 +107,14 @@ exports.getAllByUserName = async function (input) {
 exports.getUserByUserName = async function (input) {
   validate.input(input, ['userName', 'id'])
   const query = `
-  SELECT *, l.fromUserId AS liked, b.fromUserId AS blocked
+  SELECT *, l.fromUserId AS liked, b.fromUserId AS blocked, f.fromUserId AS fake
   FROM users u
   LEFT JOIN (SELECT * FROM likes WHERE fromUserId = ?) l
     ON u.id = l.toUserId
   LEFT JOIN (SELECT * FROM blocks WHERE fromUserId = ?) b
     ON u.id = b.toUserId
+  LEFT JOIN (SELECT * FROM fakes WHERE fromUserId = ?) f
+    ON u.id = f.toUserId
   LEFT JOIN (SELECT userId, CONCAT('[',
                                    GROUP_CONCAT(CONCAT('"', interest, '"')
                                                 SEPARATOR ','),
@@ -122,7 +124,7 @@ exports.getUserByUserName = async function (input) {
     ON u.id = i.userId
   WHERE u.userName = ?;
   `
-  input = [input.id, input.id, input.userName]
+  input = [input.id, input.id, input.id, input.userName]
   const result = await db.get().queryAsync(query, input)
   if (result[0] && result[0].location) {
     result[0].location.latitude = result[0].location.x
