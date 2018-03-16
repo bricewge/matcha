@@ -27,6 +27,17 @@ export default {
   components: {
     PageHeader,
     PageFooter
+  },
+
+  sockets: {
+    connect: function () {
+      // console.log('socket connected')
+    },
+
+    authenticate: function () {
+      // console.log('socket authentication requested ', this.$auth.token())
+      this.$socket.emit('authenticate', {token: this.$auth.token()})
+    }
   }
 }
 </script>

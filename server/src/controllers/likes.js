@@ -1,5 +1,6 @@
 const like = require('../models/likes')
 const user = require('../models/users')
+const notification = require('../models/notifications')
 const {AppError} = require('../helpers/error')
 
 module.exports = {
@@ -8,8 +9,15 @@ module.exports = {
     try {
       console.log('CREATE', req.params)
       const userIdLiked = await user.getIdByUserName(req.params)
-      const input = {fromUserId: req.user.id, toUserId: userIdLiked}
+      let input = {fromUserId: req.user.id, toUserId: userIdLiked}
       await like.create(input)
+      input = {
+        fromUserId: input.toUserId,
+        toUserId: input.fromUserId,
+        type: 'like'
+      }
+      // input.type = 'like'
+      await notification.create(input, req)
       res.sendStatus(201)
     } catch (err) {
       console.log(err)

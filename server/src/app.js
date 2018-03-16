@@ -1,6 +1,6 @@
 const app = require('express')()
 const server = require('http').Server(app)
-const io = require('socket.io')(server)
+// const io = require('socket.io')(server)
 const express = require('express')
 // const http = require('http').Server(app)
 const bodyParser = require('body-parser')
@@ -9,6 +9,7 @@ const helmet = require('helmet')
 const path = require('path')
 
 const db = require('./db')
+const io = require('./sockets').listen(server)
 const config = require('./config')
 
 async function main () {
@@ -16,6 +17,11 @@ async function main () {
   app.use(morgan('combined'))
   app.use(bodyParser.json())
   app.use(helmet()) // Add secure HTTP headers
+
+  app.use(function (req, res, next) {
+    req.io = io
+    next()
+  })
 
   const uploadPath = path.join(__dirname, '..', config.upload.dest)
   app.use('/' + config.upload.dest, express.static(uploadPath))
@@ -40,13 +46,6 @@ async function main () {
 
   server.listen(config.port, function () {
     console.log(`Server listening on port ${config.port}`)
-  })
-  // Socket test
-  io.on('connection', function (socket) {
-    console.log('a user connected')
-    socket.on('disconnect', function () {
-      console.log('user disconnected')
-    })
   })
 }
 

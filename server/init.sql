@@ -77,10 +77,13 @@ FOREIGN KEY (toUserId) REFERENCES users(id)
 
 CREATE TABLE notifications (
 id int(11) NOT NULL AUTO_INCREMENT,
-userId int(11) NOT NULL,
+toUserId int(11) NOT NULL,
+fromUserId int(11) NOT NULL,
 type enum('like', 'visit', 'message', 'match', 'unmatch') NOT NULL,
+seen TINYINT(1) NOT NULL DEFAULT 0,
 PRIMARY KEY (id),
-FOREIGN KEY (userId) REFERENCES users(id)
+FOREIGN KEY (toUserId) REFERENCES users(id),
+FOREIGN KEY (fromUserId) REFERENCES users(id)
 );
 
 CREATE TABLE fakes (

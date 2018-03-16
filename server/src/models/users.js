@@ -104,6 +104,35 @@ exports.getAllByUserName = async function (input) {
   return result[0]
 }
 
+exports.getUserByUserName = async function (input) {
+  validate.input(input, ['userName', 'id'])
+  const query = `
+  SELECT *, l.fromUserId AS liked, b.fromUserId AS blocked
+  FROM users u
+  LEFT JOIN (SELECT * FROM likes WHERE fromUserId = ?) l
+    ON u.id = l.toUserId
+  LEFT JOIN (SELECT * FROM blocks WHERE fromUserId = ?) b
+    ON u.id = b.toUserId
+  LEFT JOIN (SELECT userId, CONCAT('[',
+                                   GROUP_CONCAT(CONCAT('"', interest, '"')
+                                                SEPARATOR ','),
+                                   ']') AS interests
+             FROM interests
+             GROUP BY userId) i
+    ON u.id = i.userId
+  WHERE u.userName = ?;
+  `
+  input = [input.id, input.id, input.userName]
+  const result = await db.get().queryAsync(query, input)
+  if (result[0] && result[0].location) {
+    result[0].location.latitude = result[0].location.x
+    result[0].location.longitude = result[0].location.y
+    delete result[0].location.x
+    delete result[0].location.y
+  }
+  return result[0]
+}
+
 exports.getAllByEmail = async function (input) {
   validate.input(input, ['email'])
   const query = 'SELECT * FROM users WHERE email = ?;'

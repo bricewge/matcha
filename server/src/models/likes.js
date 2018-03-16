@@ -11,6 +11,6 @@ exports.create = function (input) {
 exports.delete = function (input) {
   const columns = ['fromUserId', 'toUserId']
   validate.input(input, columns)
-  const query = 'DELETE from likes where fromUserId = ? AND toUserId = ?;'
+  const query = 'DELETE FROM likes WHERE fromUserId = ? AND toUserId = ?;'
   return db.get().queryAsync(query, [input.fromUserId, input.toUserId])
 }

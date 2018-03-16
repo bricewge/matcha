@@ -36,18 +36,30 @@
           <p>Looking for: {{ sexualPreference(user.sexualPreference)}}</p>
         </v-list-tile>
         <v-list-tile>
-          <p>Last connection: {{ user.lastConnexion }}</p>
+          <p>Last connection: {{ lastConnection }}</p>
           <v-spacer/>
           <div>
-            <p>Latitude: {{ user.location.latitude }}</p>
-            <p>Latitude: {{ user.location.longitude }}</p>
+            <p>Latitude: {{ coordinates('lat') }}</p>
+            <p>Longitude: {{ coordinates('lon') }}</p>
           </div>
+        </v-list-tile>
+        <v-list-tile>
+            <v-select
+              v-model="user.interests"
+              multiple
+              append-icon
+              single-line
+              chips
+              solo
+              class="elevation-0"
+              tags
+              ></v-select>
         </v-list-tile>
       </v-list>
       <v-card-text>
         <p>{{ user.biography }}</p>
       </v-card-text>
-      <v-card-actions>
+      <v-card-actions v-if="user.userName != $auth.user().userName">
         <v-btn icon class="ml-3 my-1" @click="fake">
         <v-tooltip bottom>
           <v-icon large slot="activator" color="grey">
@@ -75,7 +87,6 @@
             large
             slot="activator"
             :color="user.liked ? 'red' : 'black'"
-            v-if="user.liked"
             >
             {{ user.liked ? 'favorite' : 'favorite_border' }}
           </v-icon>
@@ -89,6 +100,8 @@
 </template>
 
 <script>
+import moment from 'moment'
+
 export default {
   data () {
     return {
@@ -98,34 +111,27 @@ export default {
   },
 
   async mounted () {
-    const user = await this.axios.get(`/users/${this.$route.params.userName}`)
-    console.log(user.data, this)
-    this.user = user.data
-    // TODO Remove, this is to fake data
-    this.user.liked = true
-    this.user.blocked = true
-    // The separeate counter avoid getting some nulls in the v-for
-    let picturesCount = 0
-    for (let i = 0; i < 5; i++) {
-      if (user.data['picture' + i]) {
-        this.$set(this.pictures,
-                  picturesCount,
-                  {
-                    src: user.data['picture' + i],
-                    show: !picturesCount
-                  })
-        picturesCount++
+    try {
+      const user = await this.axios.get(`/users/${this.$route.params.userName}`)
+      console.log(user.data, this)
+      this.user = user.data
+      // The separeate counter avoid getting some nulls in the v-for when
+      // the pictures aren't all set
+      let picturesCount = 0
+      for (let i = 0; i < 5; i++) {
+        if (user.data['picture' + i]) {
+          this.$set(this.pictures,
+                    picturesCount,
+                    {
+                      src: user.data['picture' + i],
+                      show: !picturesCount
+                    })
+          picturesCount++
+        }
       }
+    } catch (err) {
+      this.$router.push('/404')
     }
-    // NOTE Test of address lookup
-    let geocoder = new google.maps.Geocoder;
-    let latlng = {lat: this.user.location.latitude,
-                  lng: this.user.location.longitude}
-    geocoder.geocode({'location': latlng},
-                     function(results, status) {
-                       if (status !== 'OK') return
-                       console.log(results, status)
-                     })
   },
 
   methods: {
@@ -143,6 +149,17 @@ export default {
       return res
     },
 
+    coordinates: function (axis) {
+      if (!this.user.location) return ''
+      if (axis === 'lat') {
+        return this.user.location.latitude.toPrecision(4)
+      }
+      else if (axis === 'lon') {
+        return this.user.location.longitude.toPrecision(4)
+      }
+      return ''
+    },
+
     like: async function () {
       if (!this.user.liked) {
         await this.axios.post(`/like/${this.$route.params.userName}`)
@@ -155,10 +172,23 @@ export default {
 
     block: async function () {
       // TODO Block the user
+      if (!this.user.blocked) {
+        await this.axios.post(`/block/${this.$route.params.userName}`)
+      } else {
+        await this.axios.delete(`/block/${this.$route.params.userName}`)
+      }
+      this.user.blocked = !this.user.blocked
+      console.log(this.user.liked)
     },
 
     fake: async function () {
       // TODO Report as fake
+    }
+  },
+
+  computed: {
+    lastConnection () {
+      return moment(this.user.lastConnexion).format('DD-MM-YYYY HH:mm')
     }
   }
 }

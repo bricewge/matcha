@@ -65,6 +65,7 @@ export default {
             password: this.password,
           },
         })
+        this.$socket.connect()
         this.alert.visible = false
       } catch (err) {
         this.alert.type = 'error'

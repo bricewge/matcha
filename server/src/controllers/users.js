@@ -30,10 +30,16 @@ module.exports = {
   // Show blocked user
   async show (req, res, next) {
     try {
-      let result = await user.getAllByUserName(req.params)
+      let result = await user.getUserByUserName({userName: req.params.userName, id: req.user.id})
       if (!result) throw new AppError('Invalid userName', 400)
-      result = pick(result, user.publicData)
-      res.json(result)
+      // result = pick(result, user.publicData)
+      let response = pick(result, user.publicData)
+      response.liked = !!result.liked
+      response.blocked = !!result.blocked
+      response.interests = JSON.parse(result.interests) || []
+      response.lastConnexion = result.lastConnexion
+      // console.log(result)
+      res.json(response)
     } catch (err) {
       next(err)
     }

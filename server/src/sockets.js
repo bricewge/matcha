@@ -1,6 +1,7 @@
 const socketio = require('socket.io')
 const jwt = require('jsonwebtoken')
 const config = require('./config').authentication
+const notification = require('./models/notifications')
 
 // TODO Auth user by JWT
 module.exports.listen = function (app) {
@@ -39,11 +40,17 @@ module.exports.listen = function (app) {
       console.log(`${socket.userName} disconnected`)
     })
 
-    socket.on('sawNotification', function (data) {
-      console.log('saw Notification:', data)
+    socket.on('sawNotification', async function (data) {
+      try {
+        await notification.seen({userName: socket.userName, notifsId: data})
+      } catch (err) { console.log(err) }
     })
-    socket.on('removeNotification', function (data) {
-      console.log('remove Notification:', data)
+    socket.on('removeNotification', async function (data) {
+      try {
+        console.log('remove Notification:', data)
+        await notification.delete({userName: socket.userName, id: data})
+      } catch (err) { console.log(err) }
+
     })
   })
 

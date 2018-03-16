@@ -4,6 +4,7 @@ const users = require('./controllers/users')
 const likes = require('./controllers/likes')
 const block = require('./controllers/block')
 const upload = require('./controllers/upload')
+const notification = require('./controllers/notifications')
 
 module.exports = (app) => {
   app.get('/', (req, res) => {
@@ -53,4 +54,14 @@ module.exports = (app) => {
   app.delete('/block/:userName',
     auth.authenticated,
     block.delete)
+
+  app.get('/notifications',
+    auth.authenticated,
+    notification.user)
+  // app.patch('/notifications/seen',
+  //   auth.authenticated,
+  //   notification.seen)
+  // app.delete('/notifications/:id',
+  //   auth.authenticated,
+  //   notification.delete)
 }
