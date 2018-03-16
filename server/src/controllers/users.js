@@ -1,4 +1,5 @@
 const user = require('../models/users')
+const notification = require('../models/notifications')
 const {pick} = require('../helpers/object')
 const {AppError} = require('../helpers/error')
 const {commonItems} = require('../helpers/array')
@@ -36,6 +37,14 @@ module.exports = {
       response.fake = !!result.fake
       response.interests = JSON.parse(result.interests) || []
       response.lastConnexion = result.lastConnexion
+      const userIdVisited = await user.getIdByUserName(req.params)
+      let input = {
+        fromUserId: req.user.id,
+        toUserId: userIdVisited,
+        type: 'visit'
+      }
+      // console.log(input)
+      await notification.create(input, req)
       res.json(response)
     } catch (err) {
       next(err)

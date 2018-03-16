@@ -1,13 +1,12 @@
-const user = require('../models/users')
 const validate = require('../helpers/validate')
 const db = require('../db')
 
 function emitToConnected (toUserName, event, data, io) {
   for (let index in io.sockets.connected) {
     let conn = io.sockets.connected[index]
-    console.log(conn.auth, conn.userName, toUserName)
+    // console.log(conn.auth, conn.userName, toUserName)
     if (conn.auth && conn.userName === toUserName) {
-      console.log(conn.userName)
+      // console.log(conn.userName)
       io.sockets.to(index).emit(event, data)
     }
   }
@@ -50,13 +49,13 @@ exports.create = async function (input, req) {
   const columns = ['toUserId', 'fromUserId', 'type']
   validate.input(input, columns)
   const test = await helperTestBlocked(input)
-  // console.log(input, test)
+  // console.log('Create:', input, test)
   if (test && !test.blocked) {
     const query = 'INSERT INTO notifications SET ?;'
     let result = await db.get().queryAsync(query, input)
     let notif = {
       id: result.insertId,
-      userName: test.fromUsername,
+      userName: test.fromUserName,
       image: test.fromUserPicture,
       type: input.type,
       seen: false}
