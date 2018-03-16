@@ -41,7 +41,9 @@
         alt="Profile picture">
     </v-avatar>
     <v-card>
-      <router-link class="link-hidden" to="profile">
+      <router-link
+        class="link-hidden"
+        :to="'/profile/' + $auth.user().userName">
         <v-card-title class="grey lighten-3">
           <v-layout row align-center>
             <v-flex>
@@ -88,8 +90,8 @@ export default {
     return {
       menu: false,
       items: [
-        { title: 'Chat', icon: 'chat', action: 'chat' },
-        { title: 'Settings', icon: 'settings', action: 'account' },
+        { title: 'Chat', icon: 'chat', action: '/chat' },
+        { title: 'Settings', icon: 'settings', action: '/account' },
         { title: 'Log out', icon: 'lock', action: 'logout' }
       ]
     }
@@ -99,6 +101,8 @@ export default {
     itemAction: function (item) {
       if (item.action === 'logout') {
         this.menu = false
+        // console.log(this.$socket)
+        this.$socket.disconnect()
         this.$auth.logout()
       } else {
         this.$router.push(item.action)

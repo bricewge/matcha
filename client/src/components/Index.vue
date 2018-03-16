@@ -105,7 +105,7 @@
       >
       <v-card>
         <router-link
-          :to="'user/' + props.item.userName"
+          :to="'/profile/' + props.item.userName"
           >
           <v-card-media
             :src="props.item.picture0"
@@ -199,7 +199,7 @@ export default {
       user.points = (10000000000 / user.distance) + (user.interestsInCommon * 1000) + user.fame
       this.users.push(user)
     }
-    console.log(this.users)
+    // console.log(this.users)
   },
 
   computed: {
@@ -216,7 +216,7 @@ export default {
       if (fameMax) users = users.filter(u => u.fame <= fameMax)
       if (distanceMax) users = users.filter(u => u.distance <= distanceMax)
       if (this.interests.length) users = users.filter(u => commonItems(this.interests, u.interests) === this.interests.length)
-      console.log(this.interests)
+      // console.log(this.interests)
       return users
     }
   },
@@ -239,7 +239,7 @@ export default {
     },
 
     getAddressData (addressData, placeResultData, id) {
-      console.log(addressData)
+      // console.log(addressData)
     },
 
     toggleOrder () {

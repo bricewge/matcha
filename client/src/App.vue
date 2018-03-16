@@ -2,7 +2,7 @@
 <v-app id="inspire">
   <page-header />
   <v-content v-if="$auth.ready()">
-    <router-view />
+    <router-view :key="$route.fullPath"/>
   </v-content>
   <v-content v-if="!$auth.ready()">
     <v-container fluid fill-height class="grey lighten-1" >

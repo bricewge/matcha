@@ -7,6 +7,7 @@ import Forgot from '@/components/Forgot'
 import Reset from '@/components/Reset'
 import Account from '@/components/Account'
 import Index from '@/components/Index'
+import Profile from '@/components/Profile'
 
 Vue.use(Router)
 
@@ -63,6 +64,18 @@ export default new Router({
       name: 'reset',
       meta: {auth: false},
       component: Reset
+    },
+    {
+      path: '/profile/:userName',
+      name: 'profile',
+      component: Profile,
+      meta: {
+        auth: {
+          roles: 'active',
+          redirect: '/login',
+          forbiddenRedirect: '/account'
+        }
+      }
     },
     {
       path: '/account',

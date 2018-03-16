@@ -233,7 +233,7 @@ export default {
   },
 
   computed: {
-    optionalPictures() {
+    optionalPictures () {
       const pictures = {
         1: this.formData.picture1,
         2: this.formData.picture2,
