@@ -11,12 +11,7 @@ module.exports = {
       const userIdLiked = await user.getIdByUserName(req.params)
       let input = {fromUserId: req.user.id, toUserId: userIdLiked}
       await like.create(input)
-      input = {
-        fromUserId: input.toUserId,
-        toUserId: input.fromUserId,
-        type: 'like'
-      }
-      // input.type = 'like'
+      input.type = 'like'
       await notification.create(input, req)
       res.sendStatus(201)
     } catch (err) {

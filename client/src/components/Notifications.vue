@@ -2,7 +2,7 @@
 <v-menu
   v-if="$auth.check('active')"
   :close-on-content-click="false"
-  :disabled="!notifications.length || !connected"
+  :disabled="!notifications.length || !$socket.connected"
   v-model="visible"
   offset-y
   bottom
@@ -66,37 +66,7 @@ export default {
   data () {
     return {
       visible: false,
-      connected: true, // TODO Turn it to false when finished
-      notifications: [
-        {
-          id: 42,
-          image: 'https://api.adorable.io/avatars/400/Gideon_Reinger12.png',
-          type: 'like',
-          seen: true,
-          userName: 'Gideon_Reinger12'
-        },
-        {
-          id: 1337,
-          image: 'https://api.adorable.io/avatars/400/Gideon_Reinger12.png',
-          type: 'match',
-          seen: true,
-          userName: 'Gideon_Reinger12'
-        },
-        {
-          id: 24,
-          image: 'https://api.adorable.io/avatars/400/Gideon_Reinger12.png',
-          type: 'message',
-          seen: false,
-          userName: 'Gideon_Reinger12'
-        },
-        {
-          id: 7,
-          image: 'https://api.adorable.io/avatars/400/Gideon_Reinger12.png',
-          type: 'unmatch',
-          seen: false,
-          userName: 'Gideon_Reinger12'
-        }
-      ]
+      notifications: [ ]
     }
   },
 
@@ -151,10 +121,6 @@ export default {
   },
 
   sockets: {
-    connect: async function (){
-      this.connected = true
-    },
-
     newNotification: function (notif){
       console.log('New Notification', notif)
       this.notifications.push(notif)

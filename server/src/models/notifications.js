@@ -39,8 +39,8 @@ async function helperTestBlocked (input) {
     WHERE id = ?
     ;
   `
-  input = [input.toUserId, input.toUserId, input.fromUserId,
-           input.toUserId, input.fromUserId]
+  input = [input.fromUserId, input.fromUserId, input.toUserId,
+           input.fromUserId, input.toUserId]
   const result = await db.get().queryAsync(query, input)
   return result[0]
 }
@@ -50,7 +50,7 @@ exports.create = async function (input, req) {
   const columns = ['toUserId', 'fromUserId', 'type']
   validate.input(input, columns)
   const test = await helperTestBlocked(input)
-  console.log(test)
+  // console.log(input, test)
   if (test && !test.blocked) {
     const query = 'INSERT INTO notifications SET ?;'
     let result = await db.get().queryAsync(query, input)
