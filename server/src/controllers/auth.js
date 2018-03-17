@@ -74,6 +74,7 @@ module.exports = {
       const token = authHeader.substr(7)
       const decoded = jwt.verify(token, config.authentication.jwtSecret)
       req.user = await user.getAllByUserName(decoded)
+      if (!req.user) throw new AppError('Invalid user', 400)
       req.user.interests = await interest.getAllByUserId({userId: req.user.id})
       next()
     } catch (err) {

@@ -57,12 +57,12 @@ UNIQUE (fromUserId, toUserId)
 
 CREATE TABLE matchs (
 id int(11) NOT NULL AUTO_INCREMENT,
-fromUserId int(11) NOT NULL,
-toUserId int(11) NOT NULL,
+userId1 int(11) NOT NULL,
+userId2 int(11) NOT NULL,
 PRIMARY KEY (id),
-FOREIGN KEY (fromUserId) REFERENCES users(id),
-FOREIGN KEY (toUserId) REFERENCES users(id),
-UNIQUE (fromUserId, toUserId)
+FOREIGN KEY (userId1) REFERENCES users(id),
+FOREIGN KEY (userId2) REFERENCES users(id),
+UNIQUE (userId1, userId2)
 );
 
 CREATE TABLE messages (

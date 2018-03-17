@@ -1,21 +1,39 @@
 const db = require('../db')
+const validate = require('../helpers/validate')
 
-exports.create = function (fromUserId, toUserId) {
-  const query = 'INSERT INTO matches (fromUserId, toUserId) VALUES(?, ?);'
-  return db.get().queryAsync(query, [fromUserId, toUserId])
+exports.create = function (input) {
+  const columns = ['userId1', 'userId2']
+  validate.input(input, columns)
+  const query = 'INSERT INTO matchs SET ?;'
+  return db.get().queryAsync(query, input)
 }
 
-exports.delete = function (fromUserId, toUserId) {
-  const query = 'DELETE FROM matches WHERE fromUserId = ? AND toUserId = ?;'
-  return db.get().queryAsync(query, [fromUserId, toUserId])
+exports.delete = function (input) {
+  const columns = ['userId1', 'userId2']
+  validate.input(input, columns)
+  const query = `
+    DELETE FROM matchs
+    WHERE (userId1 = ? AND userId2 = ?)
+          OR (userId2 = ? AND userId1 = ?)
+    ;
+  `
+  input = [input.userId1, input.userId2,
+           input.userId1, input.userId2]
+  return db.get().queryAsync(query, input)
 }
 
-exports.createTable = function () {
-  const table = `CREATE TABLE matchs (
-                 id int(11) NOT NULL AUTO_INCREMENT,
-                 fromUserId int(11) NOT NULL,
-                 toUserId int(11) NOT NULL,
-                 PRIMARY KEY (id),
-                 UNIQUE (fromUserId, toUserId));`
-  return db.get().queryAsync(table)
+exports.alreadyMatched = async function (input) {
+  const columns = ['userId1', 'userId2']
+  validate.input(input, columns)
+  const query = `
+    SELECT COUNT(*) AS matched
+    FROM matchs
+    WHERE (userId1 = ? AND userId2 = ?)
+          OR (userId2 = ? AND userId1 = ?)
+    ;
+  `
+  input = [input.userId1, input.userId2,
+           input.userId1, input.userId2]
+  const result = await db.get().queryAsync(query, input)
+  return result[0]
 }
