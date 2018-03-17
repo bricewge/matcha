@@ -8,6 +8,7 @@ import Reset from '@/components/Reset'
 import Account from '@/components/Account'
 import Index from '@/components/Index'
 import Profile from '@/components/Profile'
+import Chat from '@/components/Chat'
 
 Vue.use(Router)
 
@@ -69,6 +70,18 @@ export default new Router({
       path: '/profile/:userName',
       name: 'profile',
       component: Profile,
+      meta: {
+        auth: {
+          roles: 'active',
+          redirect: '/login',
+          forbiddenRedirect: '/account'
+        }
+      }
+    },
+    {
+      path: '/chat',
+      name: 'chat',
+      component: Chat,
       meta: {
         auth: {
           roles: 'active',

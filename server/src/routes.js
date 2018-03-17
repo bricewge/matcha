@@ -6,6 +6,7 @@ const block = require('./controllers/block')
 const upload = require('./controllers/upload')
 const notification = require('./controllers/notifications')
 const fake = require('./controllers/fakes')
+const match = require('./controllers/matchs')
 
 module.exports = (app) => {
   app.get('/', (req, res) => {
@@ -63,10 +64,7 @@ module.exports = (app) => {
   app.get('/notifications',
     auth.authenticated,
     notification.user)
-  // app.patch('/notifications/seen',
-  //   auth.authenticated,
-  //   notification.seen)
-  // app.delete('/notifications/:id',
-  //   auth.authenticated,
-  //   notification.delete)
+  app.get('/matchs',
+    auth.authenticated,
+    match.get)
 }
