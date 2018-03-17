@@ -65,6 +65,17 @@ module.exports = {
     }
   },
 
+  async refresh (req, res, next) {
+    try {
+      let data = {userName: req.user.userName, activation: req.user.activation}
+      const token = jwtSignUser(data)
+      res.setHeader('Authorization', token)
+      res.sendStatus(201)
+    } catch (err) {
+      next(err)
+    }
+  },
+
   async authenticated (req, res, next) {
     try {
       const authHeader = req.get('Authorization')

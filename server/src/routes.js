@@ -34,7 +34,8 @@ module.exports = (app) => {
       {name: 'picture3', maxCount: 1},
       {name: 'picture4', maxCount: 1}
     ]),
-    account.update)
+    account.update,
+    auth.refresh)
 
   app.get('/users',
     auth.authenticated,

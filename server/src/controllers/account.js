@@ -50,10 +50,9 @@ module.exports = {
         }
       }
       await user.update(userData)
-      // TODO Activate account if engnouth data in DB
       await activateUser(req.user)
-      // console.log(userData.interests)
-      res.sendStatus(201)
+      req.user.userName = userData.userName
+      next()
     } catch (err) {
       for (let key in req.files) {
         fs.unlinkSync(req.files[key][0].path)

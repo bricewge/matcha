@@ -309,10 +309,10 @@ export default {
           if (key === 'location') {
             data.append('location', JSON.stringify(
               this.formData.location,
-             ['latitude', 'longitude']
+              ['latitude', 'longitude']
             ))
           } else {
-          formAppend(data, key, this.formData[key])
+            formAppend(data, key, this.formData[key])
           }
         }
         // Need to be done last since it may modifies data
@@ -325,6 +325,7 @@ export default {
         }
         const config = {headers: {'content-type': 'multipart/form-data'}}
         const response = await this.axios.put('account', data, config)
+        await this.$auth.token(response.headers.authorization)
         await this.$auth.fetch()
         this.formData = initialFormData(this)
         this.alert.visible = false
