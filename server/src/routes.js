@@ -6,6 +6,7 @@ const block = require('./controllers/block')
 const upload = require('./controllers/upload')
 const notification = require('./controllers/notifications')
 const fake = require('./controllers/fakes')
+const message = require('./controllers/messages')
 const match = require('./controllers/matchs')
 
 module.exports = (app) => {
@@ -65,6 +66,11 @@ module.exports = (app) => {
   app.get('/notifications',
     auth.authenticated,
     notification.user)
+
+  app.get('/messages/:userName',
+    auth.authenticated,
+    message.get)
+
   app.get('/matchs',
     auth.authenticated,
     match.get)

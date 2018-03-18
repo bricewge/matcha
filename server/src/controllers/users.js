@@ -37,14 +37,15 @@ module.exports = {
       response.fake = !!result.fake
       response.interests = JSON.parse(result.interests) || []
       response.lastConnexion = result.lastConnexion
-      const userIdVisited = await user.getIdByUserName(req.params)
-      let input = {
-        fromUserId: req.user.id,
-        toUserId: userIdVisited,
-        type: 'visit'
+      if (req.headers.referer.indexOf('/profile/') !== -1) {
+        const userIdVisited = await user.getIdByUserName(req.params)
+        let input = {
+          fromUserId: req.user.id,
+          toUserId: userIdVisited,
+          type: 'visit'
+        }
+        await notification.create(input, req)
       }
-      // console.log(input)
-      await notification.create(input, req)
       res.json(response)
     } catch (err) {
       next(err)

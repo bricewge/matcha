@@ -1,8 +1,6 @@
 const app = require('express')()
 const server = require('http').Server(app)
-// const io = require('socket.io')(server)
 const express = require('express')
-// const http = require('http').Server(app)
 const bodyParser = require('body-parser')
 const morgan = require('morgan')
 const helmet = require('helmet')

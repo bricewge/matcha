@@ -6,13 +6,5 @@ module.exports = {
       let notifs = await notification.getAllByUserId({id: req.user.id})
       res.json(notifs)
     } catch (err) { next(err) }
-  },
-
-  async seen (req, res, next) {
-    try {
-      console.log(req.body)
-      // let notifs = await notification.seen({id: req.user.id})
-      // res.json(notifs)
-    } catch (err) { next(err) }
   }
 }

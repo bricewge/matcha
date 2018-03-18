@@ -1,16 +1,6 @@
 const validate = require('../helpers/validate')
 const db = require('../db')
-
-function emitToConnected (toUserName, event, data, io) {
-  for (let index in io.sockets.connected) {
-    let conn = io.sockets.connected[index]
-    // console.log(conn.auth, conn.userName, toUserName)
-    if (conn.auth && conn.userName === toUserName) {
-      // console.log(conn.userName)
-      io.sockets.to(index).emit(event, data)
-    }
-  }
-}
+const sockets = require('../sockets')
 
 // Return all of what is needed to test before sending a notification
 // and the data for sending it
@@ -59,7 +49,7 @@ exports.create = async function (input, req) {
       image: test.fromUserPicture,
       type: input.type,
       seen: false}
-    emitToConnected(test.toUserName, 'newNotification', notif, req.io)
+    sockets.emitToConnected(test.toUserName, 'newNotification', notif, req.io)
   }
   // if (result && result.insertId) {
   //   let notif = {id: result.insertId, type: input.type, seen: false}
@@ -67,7 +57,7 @@ exports.create = async function (input, req) {
   //   notif.image = result.picture0
   //   notif.userName = result.userName
   //   result = await user.getAllById({id: input.toUserId})
-  //   emitToConnected(result.userName, 'newNotification', notif, req.io)
+  //   sockets.emitToConnected(result.userName, 'newNotification', notif, req.io)
   // }
 }
 
