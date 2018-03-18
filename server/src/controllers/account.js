@@ -36,10 +36,10 @@ module.exports = {
       userData.location = JSON.parse(userData.location)
       // Add file
       for (let file in req.files) {
-        console.log(userData.picture0)
+        // console.log(userData.picture0)
         let referer = new URL(req.headers.referer)
         const imageUrl = `${referer.origin}/${req.files[file][0].path}`
-        console.log(referer.origin)
+        // console.log(referer.origin)
         userData[file] = imageUrl
       }
       // Remove File

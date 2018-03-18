@@ -114,7 +114,7 @@ export default {
   async mounted () {
     try {
       const user = await this.axios.get(`/users/${this.$route.params.userName}`)
-      console.log(user.data, this)
+      // console.log(user.data, this)
       this.user = user.data
       // this.user.fake = true
       // The separeate counter avoid getting some nulls in the v-for when

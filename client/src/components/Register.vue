@@ -102,7 +102,7 @@ export default {
 
   methods: {
     async register () {
-        this.samePasswords()
+      this.samePasswords()
       if (!this.$refs.defaultForm.$refs.form.validate()) return
       try {
         const data = {
@@ -113,7 +113,8 @@ export default {
           password: this.password
         }
         const response = await this.$auth.register({
-          data: data
+          data: data,
+          error: function (err) { }
         })
         this.$socket.connect()
         this.alert.visible = false

@@ -71,9 +71,11 @@ export default {
   },
 
   async mounted () {
-    let notifs = await this.axios.get('/notifications')
-    // console.log(notifs.data)
-    this.notifications = notifs.data
+    if (this.$auth.check()) {
+      let notifs = await this.axios.get('/notifications')
+      // console.log(notifs.data)
+      this.notifications = notifs.data
+    }
   },
 
   computed: {
@@ -84,7 +86,7 @@ export default {
 
   methods: {
     removeNotification: function (index) {
-      console.log(`Notification ${this.notifications[index].id} removed`)
+      // console.log(`Notification ${this.notifications[index].id} removed`)
       this.$socket.emit('removeNotification', this.notifications[index].id)
       this.notifications.splice(index, 1)
       // TODO Send message via websocket to remove notif
@@ -95,7 +97,7 @@ export default {
       for (let i in this.notifications) {
         if (!this.notifications[i].seen) {
           this.notifications[i].seen = true
-          console.log(`Notification ${this.notifications[i].id} seen`)
+          // console.log(`Notification ${this.notifications[i].id} seen`)
           watched.push(this.notifications[i].id)
         }
       }
@@ -122,7 +124,7 @@ export default {
 
   sockets: {
     newNotification: function (notif){
-      console.log('New Notification', notif)
+      // console.log('New Notification', notif)
       this.notifications.push(notif)
     }
   }

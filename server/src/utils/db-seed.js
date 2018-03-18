@@ -91,7 +91,7 @@ async function seedUsers () {
       }
     }
     await Promise.all(promises)
-  } catch (err) { console.log(err) }
+  } catch (err) { }
   db.disconnect()
 }
 

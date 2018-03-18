@@ -8,9 +8,9 @@ exports.AppError = class extends Error {
     Error.captureStackTrace(this, this.constructor)
     // You can use any additional properties you want.
     // I'm going to use preferred HTTP status for this error types.
-    // `500` is the default value if not specified.
-    this.status = status || 500
-    this.statusCode = status || 500
+    // `499` is the default value if not specified.
+    this.status = status || 499
+    this.statusCode = status || 499
   }
 }
 

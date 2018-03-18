@@ -47,8 +47,8 @@ module.exports = (app) => {
   // Catch all errors
   app.use(function errorsCatcher (err, req, res, next) {
     if (!err.statusCode || !err.message) {
-      console.error(err)
-      err.statusCode = 500
+      // console.error(err)
+      err.statusCode = 499
       err.message = 'Internal server error'
     }
     return res

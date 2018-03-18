@@ -289,7 +289,7 @@ export default {
     async updateAccount () {
       this.samePasswords()
       if (!this.$refs.defaultForm.$refs.form.validate()) return
-      console.log(this.formData)
+      // console.log(this.formData)
       try {
         // Locate the user even if she hasn't given her location
         if (!this.formData.location) {
@@ -299,7 +299,7 @@ export default {
             longitude: ip.data.longitude
           }
         }
-      } catch (err) {console.log(err)}
+      } catch (err) { }
       try {
         let data = new FormData()
         if (this.interests && this.interests.length) {

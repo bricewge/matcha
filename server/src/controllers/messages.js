@@ -26,7 +26,7 @@ module.exports = {
         res.sendStatus(403)
       }
     } catch (err) {
-      console.log(err)
+      // console.log(err)
       next(err)
     }
   }

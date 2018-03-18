@@ -65,7 +65,7 @@ export default {
       this.user = user.data
       let messages = await this.axios.get('/messages/' + this.$route.params.userName)
       this.messages = messages.data
-      console.log(this.messages, user, this.$auth.user())
+      // console.log(this.messages, user, this.$auth.user())
     } catch (err) {
       // console.log(err)
       this.$router.push('/403')
@@ -77,7 +77,7 @@ export default {
 
   methods: {
     sendMessage: async function () {
-      console.log('Send message:', this.message)
+      // console.log('Send message:', this.message)
       const newMsg = {
         fromUserName: this.$auth.user().userName,
         toUserName: this.$route.params.userName,
@@ -91,7 +91,7 @@ export default {
 
   sockets: {
     newMessage: function (msg) {
-      console.log('New message', msg)
+      // console.log('New message', msg)
       this.messages.push(msg)
     }
   }

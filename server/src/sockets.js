@@ -43,13 +43,13 @@ exports.listen = function (app) {
     socket.on('sawNotification', async function (data) {
       try {
         await notification.seen({userName: socket.userName, notifsId: data})
-      } catch (err) { console.log(err) }
+      } catch (err) {  }
     })
     socket.on('removeNotification', async function (data) {
       try {
         // console.log('remove Notification:', data)
         await notification.delete({userName: socket.userName, id: data})
-      } catch (err) { console.log(err) }
+      } catch (err) { }
     })
 
     socket.on('newMessage', async function (data) {
@@ -63,7 +63,7 @@ exports.listen = function (app) {
           toUserId: toUserId,
           message: data.message
         })
-      } catch (err) { console.log(err) }
+      } catch (err) { }
     })
   })
 

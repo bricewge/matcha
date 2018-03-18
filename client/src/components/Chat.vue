@@ -44,8 +44,8 @@ export default {
     try {
       let matchs = await this.axios.get('/matchs')
       this.users = matchs.data
-      console.log(this.users)
-    } catch (err) { console.log(err) }
+      // console.log(this.users)
+    } catch (err) { }
   },
 
   computed: {
@@ -56,7 +56,7 @@ export default {
 
   sockets: {
     newMessage: function (msg) {
-      console.log('New message', msg)
+      // console.log('New message', msg)
       this.messages.push(nmsg)
     }
   }

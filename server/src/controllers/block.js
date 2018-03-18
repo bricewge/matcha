@@ -10,7 +10,7 @@ module.exports = {
       await block.create(input)
       res.sendStatus(201)
     } catch (err) {
-      console.log(err)
+      // console.log(err)
       next(err)
     }
   },

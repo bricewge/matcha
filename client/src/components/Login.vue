@@ -59,11 +59,12 @@ export default {
     async login () {
       try {
         if (!this.$refs.defaultForm.$refs.form.validate()) return
-        const response = await this.$auth.login({
+        await this.$auth.login({
           data: {
             userName: this.userName,
             password: this.password,
           },
+          error: function (err) { }
         })
         this.$socket.connect()
         this.alert.visible = false

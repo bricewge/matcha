@@ -102,7 +102,7 @@ module.exports = {
       result.interests = await interest.getAllByUserId({userId: req.user.id})
       res.json({data: result})
     } catch (err) {
-      console.log(err)
+      // console.log(err)
     }
   },
 

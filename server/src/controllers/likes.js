@@ -23,7 +23,7 @@ module.exports = {
       await notification.create(input, req)
       res.sendStatus(201)
     } catch (err) {
-      console.log(err)
+      // console.log(err)
       next(err)
     }
   },

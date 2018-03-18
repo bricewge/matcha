@@ -7,7 +7,7 @@ module.exports = {
       let matchs = await match.getAllById({id: req.user.id})
       res.json(matchs)
     } catch (err) {
-      console.log(err)
+      // console.log(err)
       next(err)
     }
   }

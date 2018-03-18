@@ -13,7 +13,7 @@ async function main () {
     }
     // await dbCreateTables()
   } catch (err) {
-    console.error(err)
+    // console.error(err)
   }
   db.disconnect()
 }
@@ -39,7 +39,7 @@ async function dbReset () {
       await dbUserCreate(dbRoot, config)
     }
   } catch (err) {
-    console.error(err)
+    // console.error(err)
     dbRoot.end()
     return false
   }
@@ -69,7 +69,7 @@ async function dbUserCreate (db, config) {
   FLUSH PRIVILEGES;`
   try {
     await db.queryAsync(query, [config.user, config.host, config.password, config.database, config.user, config.host])
-  } catch (err) { console.error(err.message); return }
+  } catch (err) { }
   console.log(`DB user ${config.user} as been created`)
 }
 
